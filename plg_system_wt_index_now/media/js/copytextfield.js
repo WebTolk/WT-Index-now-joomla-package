@@ -26,7 +26,7 @@ const copyToClipboardFallback = input => {
 };
 
 const copyToClipboard = () => {
-    const buttons = document.querySelectorAll('[data-webtolk-amocrm-copy-field-value]');
+    const buttons = document.querySelectorAll('[data-webtolk-indexnow-copy-field-value]');
 
     buttons.forEach((button)=>{
         button.addEventListener('click', ({
