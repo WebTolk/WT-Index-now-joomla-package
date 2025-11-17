@@ -1,6 +1,6 @@
 <?php
 /**
- * @package    WT Index noww joomla plagin
+ * @package       WT Index now joomla plagin
  * @version    1.0.0
  * @Author     Sergey Tolkachyov, https://web-tolk.ru
  * @copyright  (c) 2022 - September 2025 Sergey Tolkachyov. All rights reserved.
@@ -8,7 +8,7 @@
  * @since      1.3.0
  */
 
-namespace Joomla\Plugin\System\Wtindexnow\Fields;
+namespace Joomla\Plugin\System\wt_index_now\Fields;
 
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
@@ -34,13 +34,13 @@ class WebhookurlField extends FormField
     {
         /** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerAndUseScript('plg_system_wt_amocrm.copytextfield','plg_system_wt_amocrm/copytextfield.js', ['version'=>'auto'], ['defer' => true]);
+        $wa->registerAndUseScript('plg_system_wt_index_now.copytextfield','plg_system_wt_index_now/copytextfield.js', ['version'=>'auto'], ['defer' => true]);
 
         $data = $this->form->getData();
         $webhook_token = $data->get('params.webhook_token', '');
 
         if (empty($webhook_token)) {
-            $html = '<div class="alert alert-info">' . Text::_('PLG_WT_AMOCRM_FIELD_WEBHOOK_URL_EMPTY_WEBHOOK_TOKEN_DESC') . '</div>';
+            $html = '<div class="alert alert-info">' . Text::_('PLG_WT_INDEX_NOW_FIELD_WEBHOOK_URL_EMPTY_WEBHOOK_TOKEN_DESC') . '</div>';
         } else {
             $url = (new Amocrm())->webhooks()->getJoomlaWebhookUrl();
 
@@ -56,7 +56,7 @@ class WebhookurlField extends FormField
                 <button
                     class="btn btn-primary"
                     type="button"
-                    data-webtolk-amocrm-copy-field-value
+                    data-webtolk-indexnow-copy-field-value
                     title="' . Text::_('JLIB_HTML_BATCH_COPY') . '"> ' . Text::_('JLIB_HTML_BATCH_COPY') . '
                 </button>
             </div>';

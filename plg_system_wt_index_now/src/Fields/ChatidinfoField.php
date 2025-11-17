@@ -8,7 +8,7 @@
  * @since      1.0.0
  */
 
-namespace Joomla\Plugin\System\Wtindexnow\Fields;
+namespace Joomla\Plugin\System\wt_index_now\Fields;
 
 use Joomla\CMS\Form\Field\TextField;
 use Joomla\CMS\Language\Text;
