@@ -162,7 +162,7 @@ return new class () implements ServiceProviderInterface {
                         $smile = $smiles[$smile_key];
 
 
-					$com_content_url = 'https://web-tolk.ru/get?element=wtindexnowcontent';
+					$com_content_url = 'https://web-tolk.ru/get?element=wt_index_nowcontent';
                     if (!$this->installDependencies($adapter, $com_content_url)) {
 
                         $this->app->enqueueMessage(
