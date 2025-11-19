@@ -8,20 +8,20 @@
  * @since      1.3.0
  */
 
-namespace Joomla\CMS\Filesystem;
+
 namespace Joomla\Plugin\System\Wt_index_now\Fields;
 
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\UserHelper;
-use Joomla\Filesystem\Filesystem;
+use Joomla\Filesystem\File;
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-class TokenField extends FormField
+class KeyField extends FormField
 {
 
-    protected $type = 'Token';
+    protected $type = 'Key';
 
     /**
      * Method to get the field input markup for a spacer.
@@ -33,9 +33,12 @@ class TokenField extends FormField
      */
     protected function getInput()
     {
+        $filename = $this->value;
+
         $new_value = '';
         if (empty($this->value)) {
             $new_value = UserHelper::genRandomPassword(64);
+            $filename = $new_value;
         }
 
         $field_input = [];
@@ -44,16 +47,22 @@ class TokenField extends FormField
 
         if (empty($this->value)) {
             $field_input[] = '<div class="invalid-feedback d-block">';
-            $field_input[] = Text::_('PLG_WT_INDEX_NOW_KEY_IS_EMPTY');
+            $field_input[] = '<p>' . Text::_('PLG_WT_INDEX_NOW_KEY_IS_EMPTY') . '</p>';
+            $field_input[] = '<p>' . '&#10060' . Text::_('PLG_WT_INDEX_NOW_FILE_IS_EMPTY') . '</p>';
             $field_input[] = '</div>';
             $this->value = $new_value;
         } else {
             $field_input[] = '<div class="valid-feedback d-block">';
-            $field_input[] = Text::_('PLG_WT_INDEX_NOW_KEY_IS_CREATED');
+            $field_input[] = '<p>' . Text::_('PLG_WT_INDEX_NOW_KEY_IS_CREATED') . '</p>';
+            $field_input[] = '<p>' . '&#9989' . ' ' . Text::_('PLG_WT_INDEX_NOW_FILE_IS_CREATED') . '</p>';
             $field_input[] = '</div>';
-        }
 
+            if (!file_exists(JPATH_SITE . '/' . $filename . '.txt')):
+                File::write(file: JPATH_SITE . '/' . $filename . '.txt', buffer: $filename);
+            endif;
+        }
         $field_input[] = '</div>';
+
         return implode('', $field_input);
     }
 
@@ -75,17 +84,5 @@ class TokenField extends FormField
     protected function getLabel()
     {
         return Text::_(($this->element['label'] ? (string)$this->element['label'] : (string)$this->element['name']));
-    }
-}
-
-class File
-{
-    public static function write($file, $buffer, $useStreams = false)
-    {
-        $absoluteFilePath = JPATH_SITE . '/dir/file.txt';
-        $content = 'Содержимое файла';
-
-        //Именованные аргументы
-        File::write(file: $absoluteFilePath, buffer: $content, useStreams: false);
     }
 }
