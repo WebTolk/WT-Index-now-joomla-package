@@ -8,11 +8,13 @@
  * @since      1.3.0
  */
 
+namespace Joomla\CMS\Filesystem;
 namespace Joomla\Plugin\System\Wt_index_now\Fields;
 
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\UserHelper;
+use Joomla\Filesystem\Filesystem;
 
 defined('_JEXEC') or die;
 
@@ -42,12 +44,12 @@ class TokenField extends FormField
 
         if (empty($this->value)) {
             $field_input[] = '<div class="invalid-feedback d-block">';
-            $field_input[] = Text::_('PLG_WT_AMOCRM_FIELD_WEBHOOK_TOKEN_TOKEN_IS_EMPTY');
+            $field_input[] = Text::_('PLG_WT_INDEX_NOW_KEY_IS_EMPTY');
             $field_input[] = '</div>';
             $this->value = $new_value;
         } else {
             $field_input[] = '<div class="valid-feedback d-block">';
-            $field_input[] = Text::_('PLG_WT_AMOCRM_FIELD_WEBHOOK_TOKEN_TOKEN_IS_CREATED');
+            $field_input[] = Text::_('PLG_WT_INDEX_NOW_KEY_IS_CREATED');
             $field_input[] = '</div>';
         }
 
@@ -73,5 +75,17 @@ class TokenField extends FormField
     protected function getLabel()
     {
         return Text::_(($this->element['label'] ? (string)$this->element['label'] : (string)$this->element['name']));
+    }
+}
+
+class File
+{
+    public static function write($file, $buffer, $useStreams = false)
+    {
+        $absoluteFilePath = JPATH_SITE . '/dir/file.txt';
+        $content = 'Содержимое файла';
+
+        //Именованные аргументы
+        File::write(file: $absoluteFilePath, buffer: $content, useStreams: false);
     }
 }
