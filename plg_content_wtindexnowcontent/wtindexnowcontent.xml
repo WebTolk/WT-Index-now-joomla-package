@@ -46,8 +46,4 @@
             </fieldset>
         </fields>
     </config>
-    <updateservers>
-        <server type="extension" priority="1" name="WT Index now updates">https://web-tolk.ru/component/swjprojects/jupdate?element=wtindexnowcontent</server>
-    </updateservers>
-    <changelogurl>https://web-tolk.ru/jchangelog?element=wtindexnowcontent</changelogurl>
 </extension>

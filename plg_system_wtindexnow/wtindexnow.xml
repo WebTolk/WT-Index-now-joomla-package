@@ -23,10 +23,6 @@
 		<language tag="en-GB">en-GB/plg_system_wtindexnow.sys.ini</language>
 		<language tag="ru-RU">ru-RU/plg_system_wtindexnow.sys.ini</language>
 	</languages>
-	<media folder="media" destination="plg_system_wtindexnow">
-		<folder>js</folder>
-		<filename>joomla.asset.json</filename>
-	</media>
 	<install>
 		<sql>
 			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
