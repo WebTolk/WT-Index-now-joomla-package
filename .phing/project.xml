@@ -15,12 +15,12 @@
 		@task  Reset for dev    	Change version variables to developer version
 		@task  Package dev      	Package developer version
 	-->
-	<property name="name" value="WT Index now joomla plagin"/>
+	<property name="name" value="WT IndexNow package"/>
 	<property name="version" value="1.0.0"/>
-	<property name="author" value="Sergey Tolkachyov and Sergey Sergevnin"/>
+	<property name="author" value="Sergey Tolkachyov"/>
 	<property name="authorEmail" value="info@web-tolk.ru"/>
 	<property name="copyright" value="Copyright (c) %s Sergey Tolkachyov. All rights reserved."/>
-	<property name="projectdatestart" value="2018"/>
+	<property name="projectdatestart" value="2025"/>
 	<property name="link" value="https://web-tolk.ru"/>
 	<property name="root" value=".."/>
 	<taskdef name="project" classname="ProjectTask"/>

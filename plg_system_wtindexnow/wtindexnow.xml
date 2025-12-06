@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<extension type="plugin" method="upgrade" group="system">
+	<name>PLG_WTINDEXNOW</name>
+	<author>Sergey Tolkachyov</author>
+	<authorEmail>info@web-tolk.ru</authorEmail>
+	<authorUrl>https://web-tolk.ru</authorUrl>
+	<creationDate>06.12.2025</creationDate>
+	<copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
+	<license>GNU General Public License v3.0</license>
+	<version>1.0.0</version>
+	<description>PLG_WTINDEXNOW_DESC</description>
+	<namespace path="src">Joomla\Plugin\System\Wtindexnow</namespace>
+	<scriptfile>script.php</scriptfile>
+	<files>
+		<folder plugin="wtindexnow">src</folder>
+		<folder>language</folder>
+		<folder>services</folder>
+		<folder>sql</folder>
+	</files>
+	<languages folder="language" client="administrator">
+		<language tag="en-GB">en-GB/plg_system_wtindexnow.ini</language>
+		<language tag="ru-RU">ru-RU/plg_system_wtindexnow.ini</language>
+		<language tag="en-GB">en-GB/plg_system_wtindexnow.sys.ini</language>
+		<language tag="ru-RU">ru-RU/plg_system_wtindexnow.sys.ini</language>
+	</languages>
+	<media folder="media" destination="plg_system_wtindexnow">
+		<folder>js</folder>
+		<filename>joomla.asset.json</filename>
+	</media>
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field addfieldprefix="Joomla\Plugin\System\Wtindexnow\Fields" type="plugininfo" name="plugininfo"/>
+				<field type="text"
+					   name="urls_today_sent_count"
+					   label="PLG_WTINDEXNOW_URLS_TODAY_SENT_COUNT"
+					   description="PLG_WTINDEXNOW_URLS_TODAY_SENT_COUNT_DESC"
+					   readonly="true"
+					   default="0"/>
+				<field type="hidden"
+					   name="lastrun"
+					   label="lastrun"
+					   readonly="true"
+					   />
+				<field type="radio"
+					   name="mode"
+					   label="PLG_WTINDEXNOW_MODE"
+					   class="btn-group"
+					   description="PLG_WTINDEXNOW_MODE_DESC"
+					   default="now">
+					<option value="now">PLG_WTINDEXNOW_MODE_NOW</option>
+					<option value="queue">PLG_WTINDEXNOW_MODE_QUEUE</option>
+				</field>
+				<field type="number"
+					   name="index_now_urls_limit"
+					   label="PLG_WTINDEXNOW_INDEX_NOW_URLS_LIMIT"
+					   description="PLG_WTINDEXNOW_INDEX_NOW_URLS_LIMIT_DESC"
+					   filter="integer"
+					   default="10000"
+					   min="1"/>
+				<field addfieldprefix="Joomla\Plugin\System\Wtindexnow\Fields"
+					   type="key"
+					   name="key"
+					   label="PLG_WTINDEXNOW_FIELD_KEY_KEY"/>
+
+				<field type="list"
+					   name="indexnow_url"
+					   label="PLG_WTINDEXNOW_INDEXNOW_URL"
+					   description="PLG_WTINDEXNOW_INDEXNOW_URL_DESC"
+					   default="https://api.indexnow.org/indexnow">
+					<option value="https://api.indexnow.org/indexnow">IndexNow.org</option>
+					<option value="https://indexnow.amazonbot.amazon/indexnow">mazon</option>
+					<option value="https://www.bing.com/indexnow">Microsoft Bing</option>
+					<option value="https://searchadvisor.naver.com/indexnow">Naver</option>
+					<option value="https://search.seznam.cz/indexnow">Seznam.cz</option>
+					<option value="https://yandex.com/indexnow">Yandex</option>
+					<option value="https://indexnow.yep.com/indexnow">Yep</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

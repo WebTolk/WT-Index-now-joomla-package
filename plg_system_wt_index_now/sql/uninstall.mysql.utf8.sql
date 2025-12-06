@@ -1,1 +1,0 @@
-DROP TABLE #__plg_system_wt_index_now ;

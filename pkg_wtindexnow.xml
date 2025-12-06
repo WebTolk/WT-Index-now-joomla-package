@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension type="package" method="upgrade">
+	<name>PKG_WTINDEXNOW</name>
+	<author>Sergey Tolkachyov</author>
+	<creationDate>06.12.2025</creationDate>
+	<packagename>wtindexnow</packagename>
+	<version>1.0.0</version>
+	<url>https://web-tolk.ru</url>
+	<packager>Sergey Tolkachyov</packager>
+	<packagerurl>https://web-tolk.ru/dev/biblioteki/wt-amo-crm-library</packagerurl>
+	<description>PKG_WTINDEXNOW_DESC</description>
+	<license>GNU GPL 3.0</license>
+	<scriptfile>script.php</scriptfile>
+	<languages folder="language">
+		<language tag="ru-RU">ru-RU/pkg_wtindexnow.sys.ini</language>
+		<language tag="en-GB">en-GB/pkg_wtindexnow.sys.ini</language>
+	</languages>
+	<files>
+	   	<folder type="plugin" id="wtindexnow" group="system">plg_system_wtindexnow</folder>
+	   	<folder type="plugin" id="wtindexnowcontent" group="content">plg_content_wtindexnowcontent</folder>
+	</files>
+	<updateservers>
+		<server type="extension" name="WebTolk - WT IndexNow package">https://web-tolk.ru/component/swjprojects/jupdate?element=pkg_wtindexnow</server>
+	</updateservers>
+	<changelogurl>https://web-tolk.ru/jchangelog?element=pkg_wtindexnow</changelogurl>
+</extension>
