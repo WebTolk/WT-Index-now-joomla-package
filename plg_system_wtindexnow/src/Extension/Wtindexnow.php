@@ -1,6 +1,6 @@
 <?php
 /**
- * @package        WT IndexNow package
+ * @package       WT IndexNow package
  * @version        1.0.0
  * @Author         Sergey Tolkachyov, https://web-tolk.ru
  * @copyright  (c) 2024 - September 2025 Sergey Tolkachyov. All rights reserved.
@@ -75,20 +75,21 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
          * - Queue - when the mode is enabled in the plugin settings
          */
 
-        $mode = $this->isAjaxRequest() ? 'now' : $this->params->get('mode', 'now');
-
+        $mode = $this->isAjaxRequest() ? 'manual' : $this->params->get('mode', 'now');
+        $urls_count = \count($urls);
         switch ($mode) {
             case 'queue':
                 $result         = $this->enqueueUrls($urls);
-                $result_message = $result ? Text::_('PLG_WTINDEXNOW_SEND_URLS_ENQUEUE_URLS_RESULT_SUCCESSFULLY') : Text::_('PLG_WTINDEXNOW_SEND_URLS_ENQUEUE_URLS_RESULT_UNSUCCESSFULLY');
+                $result_message = $result ? Text::sprintf('PLG_WTINDEXNOW_SEND_URLS_ENQUEUE_URLS_RESULT_SUCCESSFULLY', $urls_count) : Text::sprintf('PLG_WTINDEXNOW_SEND_URLS_ENQUEUE_URLS_RESULT_UNSUCCESSFULLY', $urls_count);
                 break;
             case 'now':
+            case 'manual':
             default:
                 $result         = $this->sendUrlsToIndexNow($urls);
-                $result_message = $result ? Text::_('PLG_WTINDEXNOW_SEND_URLS_RESULT_SUCCESSFULLY') : Text::_('PLG_WTINDEXNOW_SEND_URLS_RESULT_UNSUCCESSFULLY');
+                $result_message = $result ? Text::sprintf('PLG_WTINDEXNOW_SEND_URLS_RESULT_SUCCESSFULLY', $urls_count) : Text::sprintf('PLG_WTINDEXNOW_SEND_URLS_RESULT_UNSUCCESSFULLY', $urls_count);
                 break;
         }
-
+        $this->getApplication()->enqueueMessage($result_message, ($result ? 'info' : 'error'));
         $event->setArgument('result_message', $result_message);
         $event->setArgument('urls_sent', $urls);
         $event->setArgument('result', $result);
@@ -122,8 +123,6 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
             $db->setQuery($query);
 
             if ($result = $db->execute()) {
-                $this->updateTodaySentUrlsCounter(count($urls));
-
                 return true;
             } else {
                 return false;
@@ -315,6 +314,16 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
             );
         }
 
+        if($this->params->get('log_indexnow_response', 0) == 1)
+        {
+            $response_data = [
+                'scope' => 'This is an IndexNow server response data',
+                'status_code' => $response->getStatusCode(),
+                'reason_phrase' => $response->getReasonPhrase(),
+            ];
+            $this->saveToLog(json_encode($response_data), LOG::INFO);
+        }
+
         /**
          * @see https://www.indexnow.org/documentation
          */
@@ -350,6 +359,7 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
             case 202:
             case 200:
             default:
+                $this->updateTodaySentUrlsCounter(count($urls));
                 return true;
             break;
         }

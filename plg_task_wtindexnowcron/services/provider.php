@@ -1,6 +1,6 @@
 <?php
 /**
- * @package    Task - WT KML export
+ * @package       WT IndexNow package
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2025 Sergey Tolkachyov

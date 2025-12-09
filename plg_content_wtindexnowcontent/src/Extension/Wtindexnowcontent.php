@@ -18,9 +18,10 @@ use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Event\Model\AfterChangeStateEvent;
 use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\CMS\Event\Plugin\AjaxEvent;
-use Joomla\CMS\HTML\Registry;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Toolbar\Button\BasicButton;
@@ -33,6 +34,21 @@ use function count;
 final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
 {
     protected $autoloadLanguage = true;
+
+    /**
+     * Main index now plugin params.
+     * @var ?Registry $main_plugin_params
+     * @since 1.0.0
+     */
+    protected Registry|null $main_plugin_params = null;
+    public function __construct($subject, array $config = []) {
+        parent::__construct($subject, $config);
+
+        if (PluginHelper::isEnabled('system', 'wtindexnow')) {
+            $main_index_now_plugin    = PluginHelper::getPlugin('system', 'wtindexnow');
+            $this->main_plugin_params = new Registry($main_index_now_plugin->params);
+        }
+    }
 
     /**
      *
@@ -60,6 +76,8 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
      */
     public function onContentAfterSave(AfterSaveEvent $event): void
     {
+        if(!$this->main_plugin_params) return;
+        if($this->main_plugin_params->get('mode', 'now') === 'manual') return;
         $article = $event->getItem();
         $this->triggerIndexNowEvent($this->prepareUrls([$article->id]));
     }
@@ -100,6 +118,8 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
      */
     public function onContentChangeState(AfterChangeStateEvent $event): void
     {
+        if(!$this->main_plugin_params) return;
+        if($this->main_plugin_params->get('mode', 'now') === 'manual') return;
         $ids = $event->getPks();
         $this->triggerIndexNowEvent($this->prepareUrls($ids));
     }

@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS `#__plg_system_wtindexnow_urls_queue`
 (
-    `url`        varchar(2048),
-    `created_at` datetime NULL,
-    PRIMARY KEY (`url`)
+    `url`        text,
+    `created_at` datetime NULL
 ) DEFAULT CHARSET = utf8;

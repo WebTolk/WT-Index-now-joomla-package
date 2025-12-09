@@ -4,7 +4,7 @@
 	<author>Sergey Tolkachyov</author>
 	<authorEmail>info@web-tolk.ru</authorEmail>
 	<authorUrl>https://web-tolk.ru</authorUrl>
-	<creationDate>06.12.2025</creationDate>
+	<creationDate>09.12.2025</creationDate>
 	<copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
 	<license>GNU General Public License v3.0</license>
 	<version>1.0.0</version>
@@ -56,6 +56,7 @@
 					   default="now">
 					<option value="now">PLG_WTINDEXNOW_MODE_NOW</option>
 					<option value="queue">PLG_WTINDEXNOW_MODE_QUEUE</option>
+					<option value="manual">PLG_WTINDEXNOW_MODE_MANUAL</option>
 				</field>
 				<field type="number"
 					   name="index_now_urls_limit"
@@ -81,6 +82,16 @@
 					<option value="https://search.seznam.cz/indexnow">Seznam.cz</option>
 					<option value="https://yandex.com/indexnow">Yandex</option>
 					<option value="https://indexnow.yep.com/indexnow">Yep</option>
+				</field>
+				<field type="radio"
+					   name="log_indexnow_response"
+					   label="PLG_WTINDEXNOW_LOG_INDEXNOW_RESPONSE"
+					   layout="joomla.form.field.radio.switcher"
+					   description="PLG_WTINDEXNOW_LOG_INDEXNOW_RESPONSE_DESC"
+					   default="0"
+					   filter="integer">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
 				</field>
 			</fieldset>
 		</fields>
