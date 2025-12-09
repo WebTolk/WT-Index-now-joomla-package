@@ -69,13 +69,14 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
         }
 
         /**
-         * Режимы работы: отправка сейчас или пишем в очередь
-         * Отправка сейчас - при редактировании материала на onContentAfterSave, onContentChangeState и т.д.
-         * Отправка сейчас - при ajax запросе
-         * Отправка в очередь - при режиме, включённом в настройках плагина
+         * Modes: sending now or writing to queue
+         * - Sending now is always an ajax request.
+         * - Sending now - when editing material on onContentAfterSave, onContentChangeState, etc.
+         * - Queue - when the mode is enabled in the plugin settings
          */
 
-        $mode           = $this->params->get('mode', 'now');
+        $mode = $this->isAjaxRequest() ? 'now' : $this->params->get('mode', 'now');
+
         switch ($mode) {
             case 'queue':
                 $result         = $this->enqueueUrls($urls);
@@ -107,15 +108,17 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
         $db = $this->getDatabase();
 
         try {
-            $query = $db->getQuery(true);
-            $query->insert($db->quoteName('#__plg_system_wtindexnow_urls_queue'));
-            $columns = ['url', 'created_at'];
-            $date    = (new Date('now'))->toSql();
-            $query->columns($db->quoteName($columns));
-            foreach ($urls as $url) {
-                $query->values(implode(',', $query->bindArray([$url, $date], ParameterType::STRING)));
-            }
 
+            $columns = [$db->quoteName('url'), $db->quoteName('created_at')];
+            $values = [];
+            foreach ($urls as $url)
+            {
+                $values[] = '(' . $db->quote($url) . ', NOW())';
+            }
+            $query = 'REPLACE INTO ' . $db->quoteName('#__plg_system_wtindexnow_urls_queue') . ' (' . implode(
+                    ', ',
+                    $columns
+                ) . ') VALUES ' . implode(',', $values);
             $db->setQuery($query);
 
             if ($result = $db->execute()) {
@@ -279,7 +282,7 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
         }
 
         // 10k limit per day
-        // @link       https://web-tolk.ru
+        // @see https://www.indexnow.org/documentation
         $index_now_urls_limit = (int)$this->params->get('index_now_urls_limit', 10000);
         if ((int)$this->params->get('urls_today_sent_count', 0) > $index_now_urls_limit) {
             $this->saveToLog('IndexNow: Too many requests per day. Limit is ' . $index_now_urls_limit, Log::ERROR);
@@ -304,17 +307,16 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
         $response = false;
 
         try {
-            $response = $http->post($indexnow_url, $body_request, $headers, 5);
+            $response = $http->post($indexnow_url, json_encode($body_request), $headers, 5);
         } catch (Exception $e) {
             $this->saveToLog(
-                'IndexNow: . ' . $indexnow_url . ' ' . json_encode($body_request) . ' File: ' . $e->getFile(
-                ) . ' Line: ' . $e->getLine() . ' ' . $e->getMessage() . ' ',
+                'IndexNow: . ' . $indexnow_url . ' ' . json_encode($body_request) . ' File: ' . $e->getFile() . ' Line: ' . $e->getLine() . ' ' . $e->getMessage() . ' ',
                 Log::ERROR
             );
         }
 
         /**
-         * @link       https://web-tolk.ru
+         * @see https://www.indexnow.org/documentation
          */
         switch ($response->getStatusCode()) {
             case 400:
@@ -322,6 +324,7 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
                     'IndexNow: Bad request. Invalid format. ' . $indexnow_url . ' ' . json_encode($body_request),
                     Log::ERROR
                 );
+                break;
             case 403:
                 $this->saveToLog(
                     'IndexNow: Forbidden. In case of key not valid (e.g. key not found, file found but key not in the file). ' . $indexnow_url . ' ' . json_encode(
@@ -329,6 +332,7 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
                     ),
                     Log::ERROR
                 );
+                break;
             case 422:
                 $this->saveToLog(
                     'IndexNow: In case of URLs which don’t belong to the host or the key is not matching the schema in the protocol. ' . $indexnow_url . ' ' . json_encode(
@@ -336,6 +340,7 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
                     ),
                     Log::ERROR
                 );
+                break;
             case 429:
                 $this->saveToLog(
                     'IndexNow: Too Many Requests. ' . $indexnow_url . ' ' . json_encode($body_request),
@@ -346,8 +351,21 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
             case 200:
             default:
                 return true;
+            break;
         }
 
         return false;
+    }
+
+    /**
+     * Check valid AJAX request
+     *
+     * @return  bool
+     *
+     * @since   1.0.0
+     */
+    private function isAjaxRequest():bool
+    {
+        return strtolower($this->getApplication()->getInput()->server->get('HTTP_X_REQUESTED_WITH', '')) === 'xmlhttprequest';
     }
 }

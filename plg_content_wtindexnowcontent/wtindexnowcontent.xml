@@ -33,6 +33,17 @@
             <fieldset name="basic">
                 <field addfieldprefix="Joomla\Plugin\Content\Wtindexnowcontent\Fields" type="plugininfo" name="plugininfo"/>
 				<field	type="radio"
+						  name="show_button"
+						  label="PLG_WTINDEXNOWCONTENT_SHOW_BUTTON"
+						  description="PLG_WTINDEXNOWCONTENT_SHOW_BUTTON_DESC"
+						  layout="joomla.form.field.radio.switcher"
+						  default="1"
+						  filter="boolean"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field	type="radio"
 						  name="send_unpublished"
 						  label="PLG_WTINDEXNOWCONTENT_SEND_UNPUBLISHED"
 						  description="PLG_WTINDEXNOWCONTENT_SEND_UNPUBLISHED_DESC"

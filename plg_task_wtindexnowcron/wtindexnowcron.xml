@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="task" method="upgrade">
+	<name>wtindexnowcron</name>
+	<author>Sergey Tolkachyov</author>
+	<creationDate>28.08.2025</creationDate>
+	<copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>info@web-tolk.ru</authorEmail>
+	<authorUrl>https://web-tolk.ru</authorUrl>
+	<version>1.0.0</version>
+	<description>Кастомный плагин экспорта материалов в формат KML и создания версии в компоненте SW JProjects</description>
+	<namespace path="src">Joomla\Plugin\Task\Wtindexnowcron</namespace>
+	<scriptfile>script.php</scriptfile>
+	<languages folder="language" client="administrator">
+		<language tag="ru-RU">ru-RU/plg_task_wtindexnowcron.ini</language>
+		<language tag="ru-RU">ru-RU/plg_task_wtindexnowcron.sys.ini</language>
+		<language tag="en-GB">en-GB/plg_task_wtindexnowcron.ini</language>
+		<language tag="en-GB">en-GB/plg_task_wtindexnowcron.sys.ini</language>
+	</languages>
+	<files>
+		<folder>services</folder>
+		<folder plugin="wtindexnowcron">src</folder>
+		<filename>wtindexnowcron.xml</filename>
+	</files>
+	<config>
+        <fields name="params">
+            <fieldset name="basic">
+
+			</fieldset>
+		</fields>
+	</config>
+</extension>

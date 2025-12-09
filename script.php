@@ -84,6 +84,8 @@ return new class () implements ServiceProviderInterface {
                  * @param   InstallerAdapter  $adapter  - Parent object calling this method.
                  *
                  * @return  bool
+                 *
+                 * @since   1.0.0
                  */
                 public function install(InstallerAdapter $adapter): bool
                 {
@@ -115,7 +117,6 @@ return new class () implements ServiceProviderInterface {
                  */
                 public function update(InstallerAdapter $adapter): bool
                 {
-                    $this->saveLibraryParams();
                     return true;
                 }
 
@@ -134,35 +135,6 @@ return new class () implements ServiceProviderInterface {
                     // Check compatible
                     if (!$this->checkCompatible($adapter->getElement())) {
                         return false;
-                    }
-
-                    if ($type == 'uninstall') {
-                        return true;
-                    }
-
-                    /**
-                     *
-                     * Joomla при обновлении расширений типа library по факту удаляет их (вместе с данными в базе),
-                     * а потом устанавливает заново.
-                     * Дабы избежать потерь данных библиотеки из базы пишем этот костыль.
-                     *
-                     * @see https://github.com/joomla/joomla-cms/issues/39360
-                     *
-                     */
-                    if ($type == 'update') {
-                        $lib_params = LibraryHelper::getParams('Webtolk/Amocrm');
-                        $jconfig = $this->app->getConfig();
-                        $options = [
-                            'defaultgroup' => 'wt_amo_crm_temp',
-                            'caching' => true,
-                            'cachebase' => $jconfig->get('cache_path'),
-                            'storage' => $jconfig->get('cache_handler'),
-                        ];
-
-                        $cache = Factory::getContainer()
-                            ->get(CacheControllerFactoryInterface::class)
-                            ->createCacheController('', $options);
-                        $cache->store($lib_params, 'wt_amo_crm_temp');
                     }
 
                     return true;
@@ -222,57 +194,6 @@ return new class () implements ServiceProviderInterface {
                     $this->app->enqueueMessage($html, 'info');
 
                     return true;
-                }
-
-                /**
-                 * Save library params
-                 *
-                 * @since 1.3.0
-                 */
-                protected function saveLibraryParams()
-                {
-                    /**
-                     *
-                     * Joomla при обновлении расширений типа library по факту удаляет их (вместе с данными в базе),
-                     * а потом устанавливает заново.
-                     * Дабы избежать потерь данных библиотеки из базы пишем этот костыль.
-                     * Здесь сохраняем заново данные библиотеки в базу данных.
-                     * @see https://github.com/joomla/joomla-cms/issues/39360
-                     *
-                     */
-                    $jconfig = $this->app->getConfig();
-                    $options = [
-                        'defaultgroup' => 'wt_amo_crm_temp',
-                        'caching' => true,
-                        'cachebase' => $jconfig->get('cache_path'),
-                        'storage' => $jconfig->get('cache_handler'),
-                    ];
-                    $cache = Factory::getContainer()
-                        ->get(CacheControllerFactoryInterface::class)
-                        ->createCacheController('', $options);
-                    $lib_params = $cache->get('wt_amo_crm_temp');
-                    LibraryHelper::saveParams('Webtolk/Amocrm', $lib_params);
-                    $cache->clean('wt_amo_crm_temp');
-                }
-
-                /**
-                 * Enable plugin after installation.
-                 *
-                 * @param  InstallerAdapter  $adapter  Parent object calling object.
-                 *
-                 * @since  1.0.0
-                 */
-                protected function enablePlugin(InstallerAdapter $adapter)
-                {
-                    // Prepare plugin object
-                    $plugin = new stdClass();
-                    $plugin->type = 'plugin';
-                    $plugin->element = $adapter->getElement();
-                    $plugin->folder = (string)$adapter->getParent()->manifest->attributes()['group'];
-                    $plugin->enabled = 1;
-
-                    // Update record
-                    $this->db->updateObject('#__extensions', $plugin, ['type', 'element', 'folder']);
                 }
 
                 /**
