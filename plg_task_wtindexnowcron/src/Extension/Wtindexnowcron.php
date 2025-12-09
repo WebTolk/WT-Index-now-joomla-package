@@ -109,16 +109,10 @@ final class Wtindexnowcron extends CMSPlugin implements SubscriberInterface
                 return STATUS::OK;
             }
 
-            $event  = AbstractEvent::create(
-                'onWtIndexNowSendUrls',
-                [
-                    'subject' => $this,
-                    'urls'    => $urls,
-                ]
-            );
+
             $result = $this->getApplication()
-                ->getDispatcher()
-                ->dispatch($event->getName(), $event)->getArgument('result', false);
+                           ->bootPlugin('wtindexnow', 'system')
+                           ->sendUrlsToIndexNow($urls);
 
             if($result) {
                 $query->clear();

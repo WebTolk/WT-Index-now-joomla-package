@@ -17,12 +17,15 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\ParameterType;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Http\HttpFactory;
+
+use Joomla\Registry\Registry;
 
 use function count;
 use function defined;
@@ -265,6 +268,12 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
      */
     public function sendUrlsToIndexNow(array $urls = []): bool
     {
+        if(!$this->params) {
+            // For case when this method is called from other code directly, not via event
+            $main_index_now_plugin = PluginHelper::getPlugin('system', 'wtindexnow');
+            $this->params = new Registry($main_index_now_plugin->params);
+        }
+
         if (empty($key = $this->params->get('key', ''))) {
             $this->saveToLog('IndexNow: there is empty key file param in plugin params', Log::ERROR);
 

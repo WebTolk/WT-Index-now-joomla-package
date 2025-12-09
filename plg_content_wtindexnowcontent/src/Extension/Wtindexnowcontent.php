@@ -76,6 +76,7 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
      */
     public function onContentAfterSave(AfterSaveEvent $event): void
     {
+        if($event->getContext() !== 'com_content.article') return; // only for articles (content)
         if(!$this->main_plugin_params) return;
         if($this->main_plugin_params->get('mode', 'now') === 'manual') return;
         $article = $event->getItem();
@@ -118,6 +119,7 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
      */
     public function onContentChangeState(AfterChangeStateEvent $event): void
     {
+        if($event->getContext() !== 'com_content.article') return; // only for articles (content)
         if(!$this->main_plugin_params) return;
         if($this->main_plugin_params->get('mode', 'now') === 'manual') return;
         $ids = $event->getPks();
@@ -211,6 +213,9 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
             $model = $this->getApplication()->bootComponent('com_content')
                 ->getMVCFactory()
                 ->createModel('Article', 'Administrator', ['ignore_request' => true]);
+            // Trick due to bug in core populateState() method
+            // @see https://github.com/joomla/joomla-cms/issues/46311
+            $model->getState('category.id');
             $model->setState('params', (new Registry()));
             $article = $model->getItem($article_id);
 
