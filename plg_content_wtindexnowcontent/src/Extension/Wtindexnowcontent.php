@@ -147,7 +147,8 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
         $button = (new BasicButton('send-to-indexnow'))
             ->text(Text::_('PLG_WTINDEXNOWCONTENT_BUTTON_LABEL'))
             ->icon('fa-solid fa-arrow-up-right-dots')
-            ->onclick("window.wtindexnowcontent()");
+            ->onclick("window.wtindexnowcontent()")
+            ->listCheck(true);
         $toolbar->appendButton($button);
 
 

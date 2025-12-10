@@ -6,7 +6,10 @@
  * @license     GNU/GPL 3
  * @since       1.0.0
  */
-
+/**
+ * Perhaps we will make one file for all the providers'
+ * plugins, instead of duplicating similar functionality.
+ */
 (() => {
 	window.wtindexnowcontent = () => {
 
