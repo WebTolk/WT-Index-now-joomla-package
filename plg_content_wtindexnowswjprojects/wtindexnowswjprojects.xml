@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <extension type="plugin" method="upgrade" group="content">
-    <name>PLG_WTINDEXNOWCONTENT</name>
+    <name>PLG_WTINDEXNOWSWJPROJECTS</name>
     <author>Sergey Tolkachyov</author>
     <authorEmail>info@web-tolk.ru</authorEmail>
     <authorUrl>https://web-tolk.ru</authorUrl>
@@ -8,34 +8,33 @@
     <copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
     <license>GNU General Public License v3.0</license>
     <version>1.0.0</version>
-    <description>PLG_WTINDEXNOWCONTENT_DESC</description>
-    <namespace path="src">Joomla\Plugin\Content\Wtindexnowcontent</namespace>
-    <scriptfile>script.php</scriptfile>
-	<media destination="plg_content_wtindexnowcontent" folder="media">
+    <description>PLG_WTINDEXNOWSWJPROJECTS_DESC</description>
+    <namespace path="src">Joomla\Plugin\Content\Wtindexnowswjprojects</namespace>
+	<media destination="plg_content_wtindexnowswjprojects" folder="media">
 		<folder>js</folder>
 	</media>
     <files>
-        <folder plugin="wtindexnowcontent">src</folder>
+        <folder plugin="wtindexnowswjprojects">src</folder>
         <folder>services</folder>
         <folder>language</folder>
     </files>
     <languages folder="language" client="administrator">
-        <language tag="en-GB">en-GB/plg_content_wtindexnowcontent.ini</language>
-		<language tag="en-GB">en-GB/plg_content_wtindexnowcontent.sys.ini</language>
-        <language tag="ru-RU">ru-RU/plg_content_wtindexnowcontent.ini</language>
-        <language tag="ru-RU">ru-RU/plg_content_wtindexnowcontent.sys.ini</language>
+        <language tag="en-GB">en-GB/plg_content_wtindexnowswjprojects.ini</language>
+		<language tag="en-GB">en-GB/plg_content_wtindexnowswjprojects.sys.ini</language>
+        <language tag="ru-RU">ru-RU/plg_content_wtindexnowswjprojects.ini</language>
+        <language tag="ru-RU">ru-RU/plg_content_wtindexnowswjprojects.sys.ini</language>
     </languages>
-	<media folder="media" destination="plg_content_wtindexnowcontent">
+	<media folder="media" destination="plg_content_wtindexnowswjprojects">
 		<folder>js</folder>
 	</media>
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field addfieldprefix="Joomla\Plugin\Content\Wtindexnowcontent\Fields" type="plugininfo" name="plugininfo"/>
+                <field addfieldprefix="Joomla\Plugin\Content\Wtindexnowswjprojects\Fields" type="plugininfo" name="plugininfo"/>
 				<field	type="radio"
 						  name="show_button"
-						  label="PLG_WTINDEXNOWCONTENT_SHOW_BUTTON"
-						  description="PLG_WTINDEXNOWCONTENT_SHOW_BUTTON_DESC"
+						  label="PLG_WTINDEXNOWSWJPROJECTS_SHOW_BUTTON"
+						  description="PLG_WTINDEXNOWSWJPROJECTS_SHOW_BUTTON_DESC"
 						  layout="joomla.form.field.radio.switcher"
 						  default="1"
 						  filter="boolean"
@@ -45,8 +44,8 @@
 				</field>
 				<field	type="radio"
 						  name="send_unpublished"
-						  label="PLG_WTINDEXNOWCONTENT_SEND_UNPUBLISHED"
-						  description="PLG_WTINDEXNOWCONTENT_SEND_UNPUBLISHED_DESC"
+						  label="PLG_WTINDEXNOWSWJPROJECTS_SEND_UNPUBLISHED"
+						  description="PLG_WTINDEXNOWSWJPROJECTS_SEND_UNPUBLISHED_DESC"
 						  layout="joomla.form.field.radio.switcher"
 						  default="0"
 						  filter="integer"

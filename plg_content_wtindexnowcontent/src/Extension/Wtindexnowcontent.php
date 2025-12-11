@@ -133,9 +133,15 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
      */
     public function onAfterDispatch(): void
     {
-        if(!$this->params->get('show_button', true)) return;
-        if (!$this->getApplication()->isClient('administrator')) return;
-        if ($this->getApplication()->getInput()->get('option') !== 'com_content') return;
+        if (!$this->params->get('show_button', true)) {
+            return;
+        }
+        if (!$this->getApplication()->isClient('administrator')) {
+            return;
+        }
+        if ($this->getApplication()->getInput()->get('option') !== 'com_content') {
+            return;
+        }
 
         $toolbar = $this->getApplication()->getDocument()->getToolbar('toolbar');
 
@@ -147,10 +153,12 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
         $button = (new BasicButton('send-to-indexnow'))
             ->text(Text::_('PLG_WTINDEXNOWCONTENT_BUTTON_LABEL'))
             ->icon('fa-solid fa-arrow-up-right-dots')
-            ->onclick("window.wtindexnowcontent()")
-            ->listCheck(true);
-        $toolbar->appendButton($button);
+            ->onclick("window.wtindexnowcontent()");
+        if ($this->getApplication()->getInput()->get('view') === 'articles') {
+            $button->listCheck(true);
+        }
 
+        $toolbar->appendButton($button);
 
         /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
         $wa = $this->getApplication()->getDocument()
