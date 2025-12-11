@@ -99,21 +99,20 @@ final class Wtindexnowcron extends CMSPlugin implements SubscriberInterface
             ->order($db->quoteName('created_at') . ' ASC')
             ->setLimit((int)$main_plugin_params->get('index_now_urls_limit', 10000));
 
+        $urls = $db->setQuery($query)->loadColumn();
+
+        if (empty($urls)) {
+            return STATUS::OK;
+        }
+
         $db->transactionStart();
         $result = false;
         try
         {
-            $urls = $db->setQuery($query)->loadColumn();
-
-            if (empty($urls)) {
-                return STATUS::OK;
-            }
-
 
             $result = $this->getApplication()
                            ->bootPlugin('wtindexnow', 'system')
                            ->sendUrlsToIndexNow($urls);
-
             if($result) {
                 $query->clear();
                 $query->delete($db->quoteName('#__plg_system_wtindexnow_urls_queue'))
