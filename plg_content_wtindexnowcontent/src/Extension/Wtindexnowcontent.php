@@ -76,11 +76,15 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
      */
     public function onContentAfterSave(AfterSaveEvent $event): void
     {
-        if($event->getContext() !== 'com_content.article') return; // only for articles (content)
+        $option = $this->getApplication()->getInput()->get('option');
+        $extension = $this->getApplication()->getInput()->get('extension','');
+        if (!($option === 'com_content' || ($option === 'com_categories' && $extension === 'com_content'))) {
+            return;
+        }
         if(!$this->main_plugin_params) return;
         if($this->main_plugin_params->get('mode', 'now') === 'manual') return;
         $article = $event->getItem();
-        $this->triggerIndexNowEvent($this->prepareUrls([$article->id]));
+        $this->triggerIndexNowEvent($this->prepareUrls([$article->id], $event->getContext()));
     }
 
     /**
@@ -119,11 +123,15 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
      */
     public function onContentChangeState(AfterChangeStateEvent $event): void
     {
-        if($event->getContext() !== 'com_content.article') return; // only for articles (content)
+        $option = $this->getApplication()->getInput()->get('option');
+        $extension = $this->getApplication()->getInput()->get('extension','');
+        if (!($option === 'com_content' || ($option === 'com_categories' && $extension === 'com_content'))) {
+            return;
+        }
         if(!$this->main_plugin_params) return;
         if($this->main_plugin_params->get('mode', 'now') === 'manual') return;
         $ids = $event->getPks();
-        $this->triggerIndexNowEvent($this->prepareUrls($ids));
+        $this->triggerIndexNowEvent($this->prepareUrls($ids, $event->getContext()));
     }
 
     /**
@@ -136,32 +144,37 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
         if (!$this->params->get('show_button', true)) {
             return;
         }
-        if (!$this->getApplication()->isClient('administrator')) {
-            return;
-        }
-        if ($this->getApplication()->getInput()->get('option') !== 'com_content') {
+        $app = $this->getApplication();
+        if (!$app->isClient('administrator')) {
             return;
         }
 
-        $toolbar = $this->getApplication()->getDocument()->getToolbar('toolbar');
+        $option = $app->getInput()->get('option');
+        $extension = $app->getInput()->get('extension','');
+        if (!($option === 'com_content' || ($option === 'com_categories' && $extension === 'com_content'))) {
+            return;
+        }
 
-        $lang = $this->getApplication()->getLanguage('site');
+        $toolbar = $app->getDocument()->getToolbar('toolbar');
+
+        $lang = $app->getLanguage('site');
         $tag  = $lang->getTag();
-        $this->getApplication()->getLanguage()
+        $app->getLanguage()
             ->load('plg_content_wtindexnowcontent', JPATH_ADMINISTRATOR, $tag, true);
 
         $button = (new BasicButton('send-to-indexnow'))
             ->text(Text::_('PLG_WTINDEXNOWCONTENT_BUTTON_LABEL'))
             ->icon('fa-solid fa-arrow-up-right-dots')
             ->onclick("window.wtindexnowcontent()");
-        if ($this->getApplication()->getInput()->get('view') === 'articles') {
+        $view = $app->getInput()->get('view');
+        if ($view === 'articles' || $view === 'categories') {
             $button->listCheck(true);
         }
 
         $toolbar->appendButton($button);
 
         /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-        $wa = $this->getApplication()->getDocument()
+        $wa = $app->getDocument()
             ->getWebAssetManager();
         $wa->registerAndUseScript(
             'wtindexnow.content.ajax.send',
@@ -189,58 +202,83 @@ final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
         }
 
         $data        = $this->getApplication()->getInput()->json->getArray();
-        $article_ids = $data['article_ids'];
+        $item_ids = $data['item_ids'];
+        $context = $data['context'];
 
-        if (!count($article_ids)) {
+        if (!count($item_ids)) {
             $event->setArgument('result', false);
 
             return;
         }
-        $result  = $this->triggerIndexNowEvent($this->prepareUrls($article_ids));
+        $result  = $this->triggerIndexNowEvent($this->prepareUrls($item_ids, $context));
         $message = $result ? Text::sprintf(
             'PLG_WTINDEXNOWCONTENT_ARTICLES_SENT_SUCCESSFULLY',
-            count($article_ids)
-        ) : Text::sprintf('PLG_WTINDEXNOWCONTENT_ARTICLES_SENT_UNSUCCESSFULLY', count($article_ids));
+            count($item_ids)
+        ) : Text::sprintf('PLG_WTINDEXNOWCONTENT_ARTICLES_SENT_UNSUCCESSFULLY', count($item_ids));
         $event->setArgument('result', $message);
     }
 
     /**
-     * Returns the URL of the article
+     * Returns the URL of the article or category
      *
-     * @param array $article_ids
+     * @param   array   $item_ids
+     * @param   string  $context
      *
-     * @return array
+     * @return string[] array of URLs
      *
      * @since 1.0.0
      */
-    private function prepareUrls(array $article_ids): array
+    private function prepareUrls(array $item_ids, string $context = 'com_content.article'): array
     {
+        $app = $this->getApplication();
+        $linkMode = $app->get('force_ssl', 0) >= 1 ? Route::TLS_FORCE : Route::TLS_IGNORE;
+        $sent_urls = [];
+        $plublished_state = ($context == 'com_content.article') ? 'state' : 'published';
+        foreach ($item_ids as $item_id) {
 
-        $linkMode = $this->getApplication()->get('force_ssl', 0) >= 1 ? Route::TLS_FORCE : Route::TLS_IGNORE;
-        $sent_articles = [];
-        foreach ($article_ids as $article_id) {
-            $model = $this->getApplication()->bootComponent('com_content')
-                ->getMVCFactory()
-                ->createModel('Article', 'Administrator', ['ignore_request' => true]);
-            // Trick due to bug in core populateState() method
-            // @see https://github.com/joomla/joomla-cms/issues/46311
-            $model->getState('category.id');
-            $model->setState('params', (new Registry()));
-            $article = $model->getItem($article_id);
+            switch ($context) {
+                case 'com_categories.category':
+                    $item = $app->bootComponent('com_content')
+                        ->getCategory()->get($item_id);
+                    break;
+                case 'com_content.article':
+                default:
+                    $model = $app
+                        ->bootComponent('com_content')
+                        ->getMVCFactory()
+                        ->createModel('Article', 'Administrator', ['ignore_request' => true]);
+                    // Trick due to bug in core populateState() method
+                    // @see https://github.com/joomla/joomla-cms/issues/46311
+                    $model->getState('category.id');
+                    $model->setState('params', (new Registry()));
+                    $item = $model->getItem($item_id);
+                    break;
+            }
 
-            // Don't send unpublished articles
-            if (!$this->params->get('send_unpublished', 0) && $article->state < 1) {
+            // Don't send unpublished articles or categories
+            if (!(int)$this->params->get('send_unpublished', 0) == 1 && $item->$plublished_state < 1) {
                 continue;
             }
 
-            $sent_articles[] = Route::link(
-                'site',
-                RouteHelper::getArticleRoute($article->id, $article->catid, $article->language),
-                true,
-                $linkMode,
-                true
+            switch ($context) {
+                case 'com_categories.category':
+                    $url = RouteHelper::getCategoryRoute($item->id, $item->language);
+                    break;
+                case 'com_content.article':
+                default:
+                    $url = RouteHelper::getArticleRoute($item->id, $item->catid, $item->language);
+                    break;
+            }
+
+            $sent_urls[] = Route::link(
+                client: 'site',
+                url: $url,
+                xhtml: true,
+                tls: $linkMode,
+                absolute: true
             );
         }
-        return $sent_articles;
+
+        return $sent_urls;
     }
 }
