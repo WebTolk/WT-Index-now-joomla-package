@@ -2,7 +2,7 @@
 <extension type="package" method="upgrade">
 	<name>PKG_WTINDEXNOW</name>
 	<author>Sergey Tolkachyov</author>
-	<creationDate>11.12.2025</creationDate>
+	<creationDate>16.12.2025</creationDate>
 	<packagename>wtindexnow</packagename>
 	<version>1.0.0</version>
 	<url>https://web-tolk.ru</url>
@@ -16,10 +16,12 @@
 		<language tag="en-GB">en-GB/pkg_wtindexnow.sys.ini</language>
 	</languages>
 	<files>
-	   	<folder type="plugin" id="wtindexnow" group="system">plg_system_wtindexnow</folder>
+		<folder type="plugin" id="wtindexnowcontacts" group="content">plg_content_wtindexnowcontacts</folder>
 	   	<folder type="plugin" id="wtindexnowcontent" group="content">plg_content_wtindexnowcontent</folder>
-	   	<folder type="plugin" id="wtindexnowcontacts" group="content">plg_content_wtindexnowcontacts</folder>
+	   	<folder type="plugin" id="wtindexnowphocacart" group="content">plg_content_wtindexnowphocacart</folder>
+	   	<folder type="plugin" id="wtindexnowphocadownload" group="content">plg_content_wtindexnowphocadownload</folder>
 	   	<folder type="plugin" id="wtindexnowswjprojects" group="content">plg_content_wtindexnowswjprojects</folder>
+		<folder type="plugin" id="wtindexnow" group="system">plg_system_wtindexnow</folder>
 	   	<folder type="plugin" id="wtindexnowcron" group="task">plg_task_wtindexnowcron</folder>
 	</files>
 	<updateservers>
