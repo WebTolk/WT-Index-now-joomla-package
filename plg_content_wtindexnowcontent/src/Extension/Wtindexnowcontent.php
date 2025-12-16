@@ -1,24 +1,21 @@
 <?php
 /**
  * @package       WT IndexNow package
+ * @subpackage    WT IndexNow - Articles (com_content)
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
- * @copyright     Copyright (C) 2024 Sergey Tolkachyov
- * @license       GNU/GPL 3
+ * @copyright     Copyright (C) 2025 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
  * @since         1.0.0
  */
 
 namespace Joomla\Plugin\Content\Wtindexnowcontent\Extension;
-
-// No direct access
-\defined('_JEXEC') or die;
 
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Event\Model\AfterChangeStateEvent;
 use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\CMS\Event\Plugin\AjaxEvent;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Plugin\PluginHelper;
@@ -27,9 +24,13 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Toolbar\Button\BasicButton;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Event\SubscriberInterface;
+use Joomla\Registry\Registry;
 
 use function count;
+use function defined;
 
+// No direct access
+defined('_JEXEC') or die;
 
 final class Wtindexnowcontent extends CMSPlugin implements SubscriberInterface
 {

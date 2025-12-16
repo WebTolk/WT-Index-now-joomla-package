@@ -1,17 +1,15 @@
 <?php
 /**
  * @package       WT IndexNow package
+ * @subpackage    WT IndexNow - SW JProjects
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
- * @copyright     Copyright (C) 2024 Sergey Tolkachyov
- * @license       GNU/GPL 3
+ * @copyright     Copyright (C) 2025 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
  * @since         1.0.0
  */
 
 namespace Joomla\Plugin\Content\Wtindexnowswjprojects\Extension;
-
-// No direct access
-\defined('_JEXEC') or die;
 
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
@@ -29,7 +27,11 @@ use Joomla\Component\SWJProjects\Site\Helper\RouteHelper;
 use Joomla\Event\SubscriberInterface;
 
 use function count;
+use function defined;
+use function in_array;
 
+// No direct access
+defined('_JEXEC') or die;
 
 final class Wtindexnowswjprojects extends CMSPlugin implements SubscriberInterface
 {

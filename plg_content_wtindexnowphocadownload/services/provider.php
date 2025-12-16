@@ -1,7 +1,7 @@
 <?php
 /**
  * @package       WT IndexNow package
- * @subpackage    WT IndexNow - Articles (com_content)
+ * @subpackage    WT IndexNow - Phoca Download
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2025 Sergey Tolkachyov
@@ -9,14 +9,16 @@
  * @since         1.0.0
  */
 
+\defined('_JEXEC') or die;
+
 use Joomla\CMS\Extension\PluginInterface;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Plugin\Content\Wtindexnowcontent\Extension\Wtindexnowcontent;
-
-\defined('_JEXEC') or die;
+use Joomla\Plugin\Content\Wtindexnowphocadownload\Extension\Wtindexnowphocadownload;
 
 return new class () implements ServiceProviderInterface {
     /**
@@ -34,9 +36,10 @@ return new class () implements ServiceProviderInterface {
             PluginInterface::class,
             function (Container $container) {
                 $subject = $container->get(DispatcherInterface::class);
-                $config = (array)PluginHelper::getPlugin('content', 'wtindexnowcontent');
-                $plugin = new Wtindexnowcontent($subject, $config);
-                $plugin->setApplication(\Joomla\CMS\Factory::getApplication());
+                $config = (array)PluginHelper::getPlugin('content', 'wtindexnowphocadownload');
+                $plugin = new Wtindexnowphocadownload($subject, $config);
+                $plugin->setApplication(Factory::getApplication());
+                $plugin->setDatabase(Factory::getContainer()->get(DatabaseInterface::class));
                 return $plugin;
             }
         );

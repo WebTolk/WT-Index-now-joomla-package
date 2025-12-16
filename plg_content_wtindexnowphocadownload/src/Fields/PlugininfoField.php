@@ -1,7 +1,7 @@
 <?php
 /**
  * @package       WT IndexNow package
- * @subpackage    WT IndexNow - Articles (com_content)
+ * @subpackage    WT IndexNow - Phoca Download
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2025 Sergey Tolkachyov
@@ -9,8 +9,7 @@
  * @since         1.0.0
  */
 
-namespace Joomla\Plugin\Content\Wtindexnowcontent\Fields;
-
+namespace Joomla\Plugin\Content\Wtindexnowphocadownload\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\NoteField;
 use Joomla\CMS\Language\Text;

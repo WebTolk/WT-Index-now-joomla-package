@@ -1,7 +1,7 @@
 <?php
 /**
  * @package       WT IndexNow package
- * @subpackage    WT IndexNow - Contacts (com_contact)
+ * @subpackage    WT IndexNow - Phoca Download
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2025 Sergey Tolkachyov
@@ -9,7 +9,7 @@
  * @since         1.0.0
  */
 
-namespace Joomla\Plugin\Content\Wtindexnowcontacts\Extension;
+namespace Joomla\Plugin\Content\Wtindexnowphocadownload\Extension;
 
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
@@ -22,16 +22,21 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Toolbar\Button\BasicButton;
-use Joomla\Component\Contact\Site\Helper\RouteHelper;
+use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\ParameterType;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 use function count;
 use function defined;
+use function in_array;
 
+// No direct access
 defined('_JEXEC') or die;
-
-final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
+final class Wtindexnowphocadownload extends CMSPlugin implements SubscriberInterface
 {
+    use DatabaseAwareTrait;
+
     protected $autoloadLanguage = true;
 
     /**
@@ -63,7 +68,7 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
             'onContentAfterSave'      => 'onContentAfterSave',
             'onContentChangeState'    => 'onContentChangeState',
             'onAfterDispatch'         => 'onAfterDispatch',
-            'onAjaxWtindexnowcontacts' => 'onAjaxWtindexnowcontacts',
+            'onAjaxWtindexnowphocadownload' => 'onAjaxWtindexnowphocadownload',
         ];
     }
 
@@ -75,9 +80,7 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
      */
     public function onContentAfterSave(AfterSaveEvent $event): void
     {
-        $option = $this->getApplication()->getInput()->get('option');
-        $extension = $this->getApplication()->getInput()->get('extension','');
-        if (!($option === 'com_contact' || ($option === 'com_categories' && $extension === 'com_contact'))) {
+        if (!in_array($event->getContext(),['com_phocadownload.phocadownloadcat','com_phocadownload.phocadownloadfile'])) {
             return;
         }
         if(!$this->main_plugin_params) return;
@@ -87,14 +90,14 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
     }
 
     /**
-     * @param   array  $contacts_links
+     * @param   array  $articles_links
      *
      * @return bool
      * @since 1.0.0
      */
-    private function triggerIndexNowEvent(array $contacts_links = []): bool
+    private function triggerIndexNowEvent(array $articles_links = []): bool
     {
-        if (empty($contacts_links)) {
+        if (empty($articles_links)) {
             return false;
         }
 
@@ -102,7 +105,7 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
             'onWtIndexNowSendUrls',
             [
                 'subject' => $this,
-                'urls'    => $contacts_links,
+                'urls'    => $articles_links,
             ]
         );
         $result = $this->getApplication()
@@ -113,7 +116,7 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
     }
 
     /**
-     * Index now on contact change state
+     * Index now on article change state
      *
      * @param   AfterChangeStateEvent  $event
      *
@@ -122,9 +125,7 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
      */
     public function onContentChangeState(AfterChangeStateEvent $event): void
     {
-        $option = $this->getApplication()->getInput()->get('option');
-        $extension = $this->getApplication()->getInput()->get('extension','');
-        if (!($option === 'com_contact' || ($option === 'com_categories' && $extension === 'com_contact'))) {
+        if (!in_array($event->getContext(),['com_phocadownload.phocadownloadcat','com_phocadownload.phocadownloadfile'])) {
             return;
         }
         if(!$this->main_plugin_params) return;
@@ -149,8 +150,8 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
         }
 
         $option = $app->getInput()->get('option');
-        $extension = $app->getInput()->get('extension','');
-        if (!($option === 'com_contact' || ($option === 'com_categories' && $extension === 'com_contact'))) {
+        $view = $app->getInput()->get('view','');
+        if (!($option === 'com_phocadownload' && in_array($view, ['phocadownloadcat', 'phocadownloadcats', 'phocadownloadfile', 'phocadownloadfiles']))) {
             return;
         }
 
@@ -159,14 +160,14 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
         $lang = $app->getLanguage('site');
         $tag  = $lang->getTag();
         $app->getLanguage()
-            ->load('plg_content_wtindexnowcontact', JPATH_ADMINISTRATOR, $tag, true);
+            ->load('plg_content_wtindexnowphocadownload', JPATH_ADMINISTRATOR, $tag, true);
 
         $button = (new BasicButton('send-to-indexnow'))
-            ->text(Text::_('PLG_WTINDEXNOWCONTACTS_BUTTON_LABEL'))
+            ->text(Text::_('PLG_WTINDEXNOWPHOCADOWNLOAD_BUTTON_LABEL'))
             ->icon('fa-solid fa-arrow-up-right-dots')
-            ->onclick("window.wtindexnowcontacts()");
+            ->onclick("window.wtindexnowphocadownload()");
         $view = $app->getInput()->get('view');
-        if ($view === 'contacts' || $view === 'categories') {
+        if ($view === 'phocadownloadfiles' || $view === 'phocadownloadcats') {
             $button->listCheck(true);
         }
 
@@ -176,21 +177,21 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
         $wa = $app->getDocument()
             ->getWebAssetManager();
         $wa->registerAndUseScript(
-            'wtindexnow.contact.ajax.send',
-            'plg_content_wtindexnowcontacts/ajaxsend.js'
+            'wtindexnow.content.ajax.send',
+            'plg_content_wtindexnowphocadownload/ajaxsend.js'
         );
     }
 
     /**
-     * Main ajax job. Send to IndexNow array of $article_ids here
-     * from the button in the toolbar in the contacts list
-     * and contact edit page
+     * Main ajax job. Send to IndexNow array of items here
+     * from the button in the toolbar in the files or categories list
+     * and file and category edit page
      *
      * @param   AjaxEvent  $event
      *
      * @since 1.0.0
      */
-    public function onAjaxWtindexnowcontacts(AjaxEvent $event): void
+    public function onAjaxWtindexnowphocadownload(AjaxEvent $event): void
     {
         if (!Session::checkToken('GET')) {
             return;
@@ -211,14 +212,14 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
         }
         $result  = $this->triggerIndexNowEvent($this->prepareUrls($item_ids, $context));
         $message = $result ? Text::sprintf(
-            'PLG_WTINDEXNOWCONTACTS_CONTACTS_SENT_SUCCESSFULLY',
+            'PLG_WTINDEXNOWPHOCADOWNLOAD_ELEMENTS_SENT_SUCCESSFULLY',
             count($item_ids)
-        ) : Text::sprintf('PLG_WTINDEXNOWCONTACTS_CONTACTS_SENT_UNSUCCESSFULLY', count($item_ids));
+        ) : Text::sprintf('PLG_WTINDEXNOWPHOCADOWNLOAD_ELEMENTS_SENT_UNSUCCESSFULLY', count($item_ids));
         $event->setArgument('result', $message);
     }
 
     /**
-     * Returns the URL of the contact or category
+     * Returns the URL of the article or category
      *
      * @param   array   $item_ids
      * @param   string  $context
@@ -227,44 +228,37 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
      *
      * @since 1.0.0
      */
-    private function prepareUrls(array $item_ids, string $context = 'com_contact.contact'): array
+    private function prepareUrls(array $item_ids, string $context = 'com_phocadownload.phocadownloadfile'): array
     {
+        $item_ids = ArrayHelper::toInteger($item_ids);
         $app = $this->getApplication();
         $linkMode = $app->get('force_ssl', 0) >= 1 ? Route::TLS_FORCE : Route::TLS_IGNORE;
         $sent_urls = [];
+        switch ($context) {
+            case 'com_phocadownload.phocadownloadcats':
+                $item_data = $this->getPhocaDownloadCategories($item_ids);
+                break;
+            case 'com_phocadownload.phocadownloadfile':
+            default:
+                $item_data = $this->getPhocaDownloadFiles($item_ids);
+                break;
+        }
+
+        require_once JPATH_SITE . '/administrator/components/com_phocadownload/libraries/phocadownload/path/route.php';
         foreach ($item_ids as $item_id) {
 
-            switch ($context) {
-                case 'com_categories.category':
-                    $item = $app->bootComponent('com_contact')
-                        ->getCategory()->get($item_id);
-                    break;
-                case 'com_contact.contact':
-                default:
-                    $model = $app
-                        ->bootComponent('com_contact')
-                        ->getMVCFactory()
-                        ->createModel('Contact', 'Administrator', ['ignore_request' => true]);
-                    // Trick due to bug in core populateState() method
-                    // @see https://github.com/joomla/joomla-cms/issues/46311
-                    $model->getState('category.id');
-                    $model->setState('params', (new Registry()));
-                    $item = $model->getItem($item_id);
-                    break;
-            }
-            // Don't send unpublished contacts or categories
-            if (!(int)$this->params->get('send_unpublished', 0) == 1 && $item->published < 1) {
+            // Don't send unpublished files or categories
+            if (!(int)$this->params->get('send_unpublished', 0) == 1 && $item_data[$item_id]['published'] < 1) {
                 continue;
             }
 
             switch ($context) {
-                case 'com_categories.category':
-                    $url = RouteHelper::getCategoryRoute($item->id, $item->language);
+                case 'com_phocadownload.phocadownloadcats':
+                    $url = \PhocaDownloadRoute::getCategoryRoute($item_data[$item_id]['id'], $item_data[$item_id]['alias']);
                     break;
-                case 'com_contact.contact':
+                case 'com_phocadownload.phocadownloadfile':
                 default:
-
-                    $url = RouteHelper::getContactRoute($item->id, $item->catid, $item->language);
+                    $url = \PhocaDownloadRoute::getFileRoute($item_data[$item_id]['id'], $item_data[$item_id]['catid'],$item_data[$item_id]['alias'],$item_data[$item_id]['categoryalias']);
                     break;
             }
 
@@ -278,5 +272,73 @@ final class Wtindexnowcontacts extends CMSPlugin implements SubscriberInterface
         }
 
         return $sent_urls;
+    }
+
+    /**
+     * Get file ids, category ids and published status for Phoca Download files
+     *
+     * @param   array  $ids
+     *
+     * @return array Array like [id => [id, catid, published]]
+     *
+     * @since 1.0.0
+     */
+    private function getPhocaDownloadFiles(array $ids):array
+    {
+        $files_data = [];
+        if(empty($ids)) return $files_data;
+
+        $db = $this->getDatabase();
+        $query = $db->createQuery();
+        $query->select([
+            $db->quoteName('f.id'),
+            $db->quoteName('f.catid'),
+            $db->quoteName('f.published'),
+            $db->quoteName('f.alias'),
+            $db->quoteName('c.alias','categoryalias'),
+        ])
+            ->from($db->quoteName('#__phocadownload','f'))
+            ->leftJoin($db->quoteName('#__phocadownload_categories','c'), $db->quoteName('c.id').' = '.$db->quoteName('f.catid'))
+        ->whereIn('f.id', $ids,ParameterType::INTEGER);
+        $result = $db->setQuery($query)->loadAssocList();
+
+        if($result) {
+            foreach($result as $item) {
+                $files_data[$item['id']] = $item;
+            }
+        };
+        return $files_data;
+    }
+    /**
+     * Get ids, aliases and published status for Phoca Download categories
+     *
+     * @param   array  $ids
+     *
+     * @return array Array like [id => [id, published, alias]]
+     *
+     * @since 1.0.0
+     */
+    private function getPhocaDownloadCategories(array $ids):array
+    {
+        $files_data = [];
+        if(empty($ids)) return $files_data;
+
+        $db = $this->getDatabase();
+        $query = $db->createQuery();
+        $query->select([
+            $db->quoteName('c.id'),
+            $db->quoteName('c.published'),
+            $db->quoteName('c.alias'),
+        ])
+            ->from($db->quoteName('#__phocadownload_categories','c'))
+            ->whereIn('c.id', $ids,ParameterType::INTEGER);
+        $result = $db->setQuery($query)->loadAssocList();
+
+        if($result) {
+            foreach($result as $item) {
+                $files_data[$item['id']] = $item;
+            }
+        };
+        return $files_data;
     }
 }

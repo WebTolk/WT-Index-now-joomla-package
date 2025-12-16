@@ -1,18 +1,18 @@
 <?php
 /**
  * @package       WT IndexNow package
- * @version        1.0.0
- * @Author         Sergey Tolkachyov, https://web-tolk.ru
- * @copyright  (c) 2024 - September 2025 Sergey Tolkachyov. All rights reserved.
- * @license        GNU/GPL3 http://www.gnu.org/licenses/gpl-3.0.html
- * @since          1.0.0
+ * @subpackage    WT IndexNow - main plugin
+ * @version       1.0.0
+ * @Author        Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2025 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
+ * @since         1.0.0
  */
 
 namespace Joomla\Plugin\System\Wtindexnow\Extension;
 
 use Exception;
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
-use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
@@ -20,11 +20,9 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Database\DatabaseAwareTrait;
-use Joomla\Database\ParameterType;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Http\HttpFactory;
-
 use Joomla\Registry\Registry;
 
 use function count;

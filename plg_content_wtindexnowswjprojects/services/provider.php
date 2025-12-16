@@ -1,14 +1,13 @@
 <?php
 /**
  * @package       WT IndexNow package
- * @version     1.0.0
- * @Author      Sergey Tolkachyov, https://web-tolk.ru
- * @copyright   Copyright (C) 2024 Sergey Tolkachyov
- * @license     GNU/GPL 3
- * @since       1.0.0
+ * @subpackage    WT IndexNow - SW JProjects
+ * @version       1.0.0
+ * @Author        Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2025 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
+ * @since         1.0.0
  */
-
-defined('_JEXEC') or die;
 
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Plugin\PluginHelper;
@@ -16,6 +15,8 @@ use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Plugin\Content\Wtindexnowswjprojects\Extension\Wtindexnowswjprojects;
+
+\defined('_JEXEC') or die;
 
 return new class () implements ServiceProviderInterface {
     /**

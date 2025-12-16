@@ -1,6 +1,6 @@
 /**
  * @package       WT IndexNow package
- * @subpackage    WT IndexNow - Contacts (com_contact)
+ * @subpackage    WT IndexNow - Phoca Download
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2025 Sergey Tolkachyov
@@ -12,13 +12,13 @@
  * plugins, instead of duplicating similar functionality.
  */
 (() => {
-	window.wtindexnowcontacts = () => {
+	window.wtindexnowphocadownload = () => {
 
 		let item_ids = [];
 
 		let currentUrl = new URL(window.location.href);
 		let view = currentUrl.searchParams.get('view');
-		if ((view === 'contact' || view === 'category') && currentUrl.searchParams.get('layout') === 'edit') {
+		if ((view === 'phocadownloadfile' || view === 'phocadownloadcat') && currentUrl.searchParams.get('layout') === 'edit') {
 			item_ids.push(currentUrl.searchParams.get('id'))
 		} else {
 			let checkboxes = document.querySelectorAll('#adminForm input[name="cid[]"]:checked');
@@ -33,10 +33,10 @@
 		}
 
 		const component = currentUrl.searchParams.get('option');
-		let context =  (component === 'com_contact') ? 'com_contact.contact' : 'com_categories.category';
+		let context =  (view === 'phocadownloadfile' || view === 'phocadownloadfiles' ) ? 'com_phocadownload.phocadownloadfile' : 'com_phocadownload.phocadownloadcats';
 
 		Joomla.request({
-			url: 'index.php?option=com_ajax&plugin=wtindexnowcontacts&group=content&format=json&' + Joomla.getOptions('csrf.token') + '=1',
+			url: 'index.php?option=com_ajax&plugin=wtindexnowphocadownload&group=content&format=json&' + Joomla.getOptions('csrf.token') + '=1',
 			method: 'POST',
 			data: JSON.stringify({
 				'item_ids': item_ids,

@@ -1,10 +1,11 @@
 /**
- * @package     Content - WT Index now - SW JProjects
- * @version     1.0.1
- * @Author      Sergey Tolkachyov, https://web-tolk.ru
- * @copyright   Copyright (C) 2024 Sergey Tolkachyov
- * @license     GNU/GPL 3
- * @since       1.0.0
+ * @package       WT IndexNow package
+ * @subpackage    WT IndexNow - SW JProjects
+ * @version       1.0.0
+ * @Author        Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2025 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
+ * @since         1.0.0
  */
 
 (() => {
