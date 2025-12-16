@@ -10,9 +10,6 @@
 
 namespace Joomla\Plugin\Jshoppingadmin\Wtindexnowjshopping\Extension;
 
-// No direct access
-\defined('_JEXEC') or die;
-
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
@@ -34,6 +31,8 @@ use Joomla\CMS\Factory;
 
 use function count;
 
+// No direct access
+\defined('_JEXEC') or die;
 
 final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
 {
@@ -245,8 +244,6 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
         $this->triggerIndexNowEvent($this->prepareUrls($ids, 'com_jshopping.product'));
     }
 
-
-
     /**
      * Main ajax job. Send to IndexNow array of $items_ids here
      * from the button in the toolbar in the products list, category list
@@ -294,32 +291,10 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
      */
     private function prepareUrls(array $item_ids, string $context): array
     {
-        /**
-         * Переименовали параметры и doc block.
-         * Удобно использовать shift+F6 для этого. Переименовывает по всему коду сразу.
-         * Документировать тоже лучше сразу по ходу дела, пока помнишь ЧТО это и ЗАЧЕМ.
-         *
-         *
-         * Подключаем файл bootstrap.php JoomShopping. Без него работать API JoomShopping не будет.
-         */
         require_once JPATH_SITE . '/components/com_jshopping/bootstrap.php';
         $linkMode = $this->getApplication()->get('force_ssl', 0) >= 1 ? Route::TLS_FORCE : Route::TLS_IGNORE;
         $sent_urls = [];
-        /**
-         * Тут мы проходимся по массиву $item_ids и получаем URL для каждого товара или категории.
-         * Поскольку $item_ids - это массив просто обезличенных id, мы ориентируемся на контекст.
-         * По контексту мы определяем, какую модель использовать.
-         * В случае JoomShopping это Table, а не Model - объект для работы с таблицей базы.
-         *
-         * Можно было бы обойтись и без моделей, но нам нужно проверять состояние публикации.
-         *
-         * В Joomshopping имя свойства для хранения состояния публикации для товаров и категорий разные.
-         * Для категорий это category_publish, для товаров это product_publish. Поэтому мы определяем это свйоство в переменную,
-         * а переменную уже используем как имя свойства для объекта.
-         *
-         * $item - это может быть товар или категория. А $item->$property_publish - это в одном случае
-         * $item->product_publish, в другом $item->category_publish.
-         */
+
         foreach ($item_ids as $item_id) {
             switch ($context) {
                 case 'com_jshopping.product':
@@ -331,29 +306,19 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
                     $item->load($item_id);
 
                     break;
-
                 case 'com_jshopping.category':
                 default:
-                /**
-                 * Это категория товаров. И оно же - по умолчанию.
-                 * Указываем имя свойства для публикации.
-                 */
                     $property_publish = 'category_publish';
                     $item = JSFactory::getTable('category');
                     $item->load($item_id);
 
                     break;
-            }
 
+            }
             // Don't send unpublished products or categories
             if (!$this->params->get('send_unpublished', 0) && $item->$property_publish < 1) {
                 continue;
             }
-
-            /**
-             * Товар или категория опубликованы - можем собирать URL
-             */
-
             switch ($context) {
                 case 'com_jshopping.product':
                     /**
@@ -374,19 +339,6 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
 
                     break;
             }
-            /**
-             * Собрали URL. Добавляем в массив $sent_urls.
-             * Route::link формирует уже окончательный SEF URL.
-             * Сделал именованные аргументы для наглядности.
-             *
-             * - xhtml: true - кодирует символы амперсанда в amp; Это поведение Joomla по умолчанию.
-             * - tls : true - добавляет протокол https.Мы берём это из параметров Joomla
-             * - absolute: true - делает абсолютный URL, с доменом.
-             *
-             * В случае именованных аргументов можно не соблюдать их порядок.
-             * Но это работает только в PHP 8+. Поэтому нужно учитывать "аудиторию" плагина.
-             * Весь пакет для Joomla 5+ и PHP 8+ - используем, если это удобно.
-             */
             $sent_urls[] = Route::link(
                 client:'site',
                 url: $url,
@@ -395,7 +347,6 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
                 absolute: true
             );
         }
-
         return $sent_urls;
     }
 }
