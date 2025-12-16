@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 <extension type="plugin" method="upgrade" group="jshoppingadmin">
     <name>PLG_WTINDEXNOWJSHOPPING</name>
-    <author>Sergey Tolkachyov</author>
+    <author>Sergey Sergevnin, Sergey Tolkachyov</author>
     <authorEmail>info@web-tolk.ru</authorEmail>
     <authorUrl>https://web-tolk.ru</authorUrl>
     <creationDate>11.12.2025</creationDate>
-    <copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
+    <copyright>Copyright (c) 2025 Sergey Sergevnin, Sergey Tolkachyov. All rights reserved.</copyright>
     <license>GNU General Public License v3.0</license>
     <version>1.0.0</version>
     <description>PLG_WTINDEXNOWJSHOPPING_DESC</description>
     <namespace path="src">Joomla\Plugin\Jshoppingadmin\Wtindexnowjshopping</namespace>
-    <scriptfile>script.php</scriptfile>
 	<media destination="plg_jshoppingadmin_wtindexnowjshopping" folder="media">
 		<folder>js</folder>
 	</media>

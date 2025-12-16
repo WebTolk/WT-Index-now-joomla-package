@@ -21,6 +21,7 @@
 	   	<folder type="plugin" id="wtindexnowphocacart" group="content">plg_content_wtindexnowphocacart</folder>
 	   	<folder type="plugin" id="wtindexnowphocadownload" group="content">plg_content_wtindexnowphocadownload</folder>
 	   	<folder type="plugin" id="wtindexnowswjprojects" group="content">plg_content_wtindexnowswjprojects</folder>
+	   	<folder type="plugin" id="wtindexnowjshopping" group="jshoppingadmin">plg_jshoppingadmin_wtindexnowjshopping</folder>
 		<folder type="plugin" id="wtindexnow" group="system">plg_system_wtindexnow</folder>
 	   	<folder type="plugin" id="wtindexnowcron" group="task">plg_task_wtindexnowcron</folder>
 	</files>

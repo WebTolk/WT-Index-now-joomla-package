@@ -1,10 +1,11 @@
 /**
  * @package       WT IndexNow package
- * @version     1.0.0
- * @Author      Sergey Tolkachyov, https://web-tolk.ru
- * @copyright   Copyright (C) 2024 Sergey Tolkachyov
- * @license     GNU/GPL 3
- * @since       1.0.0
+ * @subpackage    WT IndexNow - JoomShopping
+ * @version       1.0.0
+ * @Author        Sergey Sergevnin, Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2025 Sergey Sergevnin, Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
+ * @since         1.0.0
  */
 /**
  * Perhaps we will make one file for all the providers'

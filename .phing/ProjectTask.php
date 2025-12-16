@@ -117,9 +117,9 @@ class ProjectTask extends Task
 		echo ($files = $this->replacePackageName($this->name)) ? 'OK' : 'ERROR';
 		echo PHP_EOL;
 
-		echo 'Replace author ....... ';
-		echo ($files = $this->replaceAuthor($this->author)) ? 'OK' : 'ERROR';
-		echo PHP_EOL;
+//		echo 'Replace author ....... ';
+//		echo ($files = $this->replaceAuthor($this->author)) ? 'OK' : 'ERROR';
+//		echo PHP_EOL;
 
 		echo 'Replace link ....... ';
 		echo ($files = $this->replaceLink($this->link)) ? 'OK' : 'ERROR';

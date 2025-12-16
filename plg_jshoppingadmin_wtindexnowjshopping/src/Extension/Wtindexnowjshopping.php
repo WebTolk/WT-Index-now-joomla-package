@@ -1,40 +1,35 @@
 <?php
 /**
  * @package       WT IndexNow package
+ * @subpackage    WT IndexNow - JoomShopping
  * @version       1.0.0
- * @Author        Sergey Tolkachyov, https://web-tolk.ru
- * @copyright     Copyright (C) 2024 Sergey Tolkachyov
- * @license       GNU/GPL 3
+ * @Author        Sergey Sergevnin, Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2025 Sergey Sergevnin, Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
  * @since         1.0.0
  */
 
 namespace Joomla\Plugin\Jshoppingadmin\Wtindexnowjshopping\Extension;
 
-// No direct access
-\defined('_JEXEC') or die;
-
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
-use Joomla\Component\Jshopping\Site\Lib\JSFactory;
-use Joomla\Event\Event;
-use Joomla\CMS\Event\Model\AfterChangeStateEvent;
-use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\CMS\Event\Plugin\AjaxEvent;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Toolbar\Button\BasicButton;
-use Joomla\Event\SubscriberInterface;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Event\Event;
+use Joomla\Event\SubscriberInterface;
+use Joomla\Registry\Registry;
 
 use function count;
-
-
+use function defined;
+// No direct access
+defined('_JEXEC') or die;
 final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
 {
     protected $autoloadLanguage = true;
@@ -120,7 +115,7 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
         $app = $this->getApplication();
         if (!$app->isClient('administrator')) return;
         if ($app->getInput()->get('option') !== 'com_jshopping') return;
-        [$view] = $event->getArguments();
+
         $toolbar = $app->getDocument()->getToolbar('toolbar');
 
         $lang = $app->getLanguage('site');
@@ -131,7 +126,7 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
         $button = (new BasicButton('send-to-indexnow'))
             ->text(Text::_('PLG_WTINDEXNOWJSHOPPING_BUTTON_LABEL'))
             ->icon('fa-solid fa-arrow-up-right-dots')
-            ->onclick("window.wtindexnowjshopping()")
+            ->onclick('window.wtindexnowjshopping()')
             ->listCheck(true);
 
         $toolbar->appendButton($button);
@@ -157,7 +152,6 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
         $app = $this->getApplication();
         if (!$app->isClient('administrator')) return;
         if ($app->getInput()->get('option') !== 'com_jshopping') return;
-        [$view] = $event->getArguments();
         $toolbar = $app->getDocument()->getToolbar('toolbar');
 
         $lang = $app->getLanguage('site');
@@ -168,7 +162,7 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
         $button = (new BasicButton('send-to-indexnow'))
             ->text(Text::_('PLG_WTINDEXNOWJSHOPPING_BUTTON_LABEL'))
             ->icon('fa-solid fa-arrow-up-right-dots')
-            ->onclick("window.wtindexnowjshopping()");
+            ->onclick('window.wtindexnowjshopping()');
         if ($app->getInput()->get('controller') === 'categories') {
             $button->listCheck(true);
         }
@@ -294,38 +288,13 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
      */
     private function prepareUrls(array $item_ids, string $context): array
     {
-        /**
-         * Переименовали параметры и doc block.
-         * Удобно использовать shift+F6 для этого. Переименовывает по всему коду сразу.
-         * Документировать тоже лучше сразу по ходу дела, пока помнишь ЧТО это и ЗАЧЕМ.
-         *
-         *
-         * Подключаем файл bootstrap.php JoomShopping. Без него работать API JoomShopping не будет.
-         */
         require_once JPATH_SITE . '/components/com_jshopping/bootstrap.php';
         $linkMode = $this->getApplication()->get('force_ssl', 0) >= 1 ? Route::TLS_FORCE : Route::TLS_IGNORE;
         $sent_urls = [];
-        /**
-         * Тут мы проходимся по массиву $item_ids и получаем URL для каждого товара или категории.
-         * Поскольку $item_ids - это массив просто обезличенных id, мы ориентируемся на контекст.
-         * По контексту мы определяем, какую модель использовать.
-         * В случае JoomShopping это Table, а не Model - объект для работы с таблицей базы.
-         *
-         * Можно было бы обойтись и без моделей, но нам нужно проверять состояние публикации.
-         *
-         * В Joomshopping имя свойства для хранения состояния публикации для товаров и категорий разные.
-         * Для категорий это category_publish, для товаров это product_publish. Поэтому мы определяем это свйоство в переменную,
-         * а переменную уже используем как имя свойства для объекта.
-         *
-         * $item - это может быть товар или категория. А $item->$property_publish - это в одном случае
-         * $item->product_publish, в другом $item->category_publish.
-         */
+
         foreach ($item_ids as $item_id) {
             switch ($context) {
                 case 'com_jshopping.product':
-                    /**
-                     * сделать по аналогии для товаров
-                     */
                     $property_publish = 'product_publish';
                     $item = JSFactory::getTable('product');
                     $item->load($item_id);
@@ -334,10 +303,6 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
 
                 case 'com_jshopping.category':
                 default:
-                /**
-                 * Это категория товаров. И оно же - по умолчанию.
-                 * Указываем имя свойства для публикации.
-                 */
                     $property_publish = 'category_publish';
                     $item = JSFactory::getTable('category');
                     $item->load($item_id);
@@ -349,16 +314,8 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
             if (!$this->params->get('send_unpublished', 0) && $item->$property_publish < 1) {
                 continue;
             }
-
-            /**
-             * Товар или категория опубликованы - можем собирать URL
-             */
-
             switch ($context) {
                 case 'com_jshopping.product':
-                    /**
-                     * то же самое для товаров
-                     */
                     $category_id = $item->getCategory();
                     $url = 'index.php?option=com_jshopping&controller=product&task=view&category_id='.$category_id.'&product_id=' . $item_id;
                     $defaultItemid = Helper::getDefaultItemid($url);
@@ -374,19 +331,7 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
 
                     break;
             }
-            /**
-             * Собрали URL. Добавляем в массив $sent_urls.
-             * Route::link формирует уже окончательный SEF URL.
-             * Сделал именованные аргументы для наглядности.
-             *
-             * - xhtml: true - кодирует символы амперсанда в amp; Это поведение Joomla по умолчанию.
-             * - tls : true - добавляет протокол https.Мы берём это из параметров Joomla
-             * - absolute: true - делает абсолютный URL, с доменом.
-             *
-             * В случае именованных аргументов можно не соблюдать их порядок.
-             * Но это работает только в PHP 8+. Поэтому нужно учитывать "аудиторию" плагина.
-             * Весь пакет для Joomla 5+ и PHP 8+ - используем, если это удобно.
-             */
+
             $sent_urls[] = Route::link(
                 client:'site',
                 url: $url,
