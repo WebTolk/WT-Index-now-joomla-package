@@ -11,31 +11,33 @@
  * plugins, instead of duplicating similar functionality.
  */
 (() => {
-	window.wtindexnowcontent = () => {
+	window.wtindexnowjshopping = () => {
 
-		let article_ids = [];
+		let items_ids = [];
 
 		let currentUrl = new URL(window.location.href);
-
-		if (currentUrl.searchParams.get('view') === 'article' && currentUrl.searchParams.get('layout') === 'edit') {
-			article_ids.push(currentUrl.searchParams.get('id'))
+		const controller = currentUrl.searchParams.get('controller');
+		const task = currentUrl.searchParams.get('task');
+		if ((controller === 'categories' || controller === 'products') && task === 'edit') {
+			items_ids.push(currentUrl.searchParams.get('id'))
 		} else {
 			let checkboxes = document.querySelectorAll('#adminForm input[name="cid[]"]:checked');
 
 			if (checkboxes.length === 0) {
-				alert('There is no articles selected');
+				alert('There is no items selected');
 				return;
 			}
 			checkboxes.forEach(checkbox => {
-				article_ids.push(checkbox.value);
+				items_ids.push(checkbox.value);
 			});
 		}
-
+		let context =  (controller === 'categories') ? 'com_jshopping.category' : 'com_jshopping.product';
 		Joomla.request({
-			url: 'index.php?option=com_ajax&plugin=wtindexnowcontent&group=content&format=json&' + Joomla.getOptions('csrf.token') + '=1',
+			url: 'index.php?option=com_ajax&plugin=wtindexnowjshopping&group=jshoppingadmin&format=json&' + Joomla.getOptions('csrf.token') + '=1',
 			method: 'POST',
 			data: JSON.stringify({
-				'article_ids': article_ids,
+				'items_ids': items_ids,
+				'context': context,
 			}),
 			onSuccess: function (response, xhr) {
 				if (response !== '') {
