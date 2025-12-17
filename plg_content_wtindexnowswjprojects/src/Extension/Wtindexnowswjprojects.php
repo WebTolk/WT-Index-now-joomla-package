@@ -78,9 +78,9 @@ final class Wtindexnowswjprojects extends CMSPlugin implements SubscriberInterfa
     public static function getSubscribedEvents(): array
     {
         return [
-            'onContentAfterSave'      => 'onContentAfterSave',
-            'onContentChangeState'    => 'onContentChangeState',
-            'onAfterDispatch'         => 'onAfterDispatch',
+            'onContentAfterSave'          => 'onContentAfterSave',
+            'onContentChangeState'        => 'onContentChangeState',
+            'onAfterDispatch'             => 'onAfterDispatch',
             'onAjaxWtindexnowswjprojects' => 'onAjaxWtindexnowswjprojects',
         ];
     }

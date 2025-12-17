@@ -16,7 +16,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Plugin\Content\Wtindexnowcontent\Extension\Wtindexnowcontent;
+use Joomla\Plugin\Jshoppingadmin\Wtindexnowjshopping\Extension\Wtindexnowjshopping;
 
 return new class () implements ServiceProviderInterface {
     /**
@@ -34,8 +34,8 @@ return new class () implements ServiceProviderInterface {
             PluginInterface::class,
             function (Container $container) {
                 $subject = $container->get(DispatcherInterface::class);
-                $config = (array)PluginHelper::getPlugin('content', 'wtindexnowcontent');
-                $plugin = new Wtindexnowcontent($subject, $config);
+                $config = (array)PluginHelper::getPlugin('jshoppingadmin', 'wtindexnowjshopping');
+                $plugin = new Wtindexnowjshopping($subject, $config);
                 $plugin->setApplication(\Joomla\CMS\Factory::getApplication());
                 return $plugin;
             }

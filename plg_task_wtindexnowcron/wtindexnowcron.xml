@@ -2,7 +2,7 @@
 <extension type="plugin" group="task" method="upgrade">
 	<name>PLG_WTINDEXNOWCRON</name>
 	<author>Sergey Tolkachyov</author>
-	<creationDate>16.12.2025</creationDate>
+	<creationDate>17.12.2025</creationDate>
 	<copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>info@web-tolk.ru</authorEmail>

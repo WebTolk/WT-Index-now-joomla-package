@@ -9,7 +9,7 @@
  * @since         1.0.0
  */
 
-namespace Joomla\Plugin\Content\Wtindexnowcontent\Fields;
+namespace Joomla\Plugin\Jshoppingadmin\Wtindexnowjshopping\Fields;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\NoteField;
@@ -106,5 +106,3 @@ class PlugininfoField extends NoteField
 	}
 
 }
-
-?>
