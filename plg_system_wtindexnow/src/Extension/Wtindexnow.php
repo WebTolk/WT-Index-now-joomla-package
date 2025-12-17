@@ -147,56 +147,58 @@ final class Wtindexnow extends CMSPlugin implements SubscriberInterface
      */
     public function updateTodaySentUrlsCounter(int $urls_count = 0)
     {
-        $lustrun     = $this->params->get('lastrun', null);
-        $currentDate = \date('Y-m-d');
-
-        if ($lustrun !== $currentDate) {
-            $this->params->set('urls_today_sent_count', 0);
-            $this->params->set('lastrun', $currentDate);
-        }
-        $count = $this->params->get('urls_today_sent_count', 0);
-        $count = $count + $urls_count;
-
-        $this->params->set('urls_today_sent_count', $count);
-
-        $paramsJson = $this->params->toString();
-        $db         = $this->getDatabase();
-        $query      = $db->createQuery()
-            ->update($db->quoteName('#__extensions'))
-            ->set($db->quoteName('params') . ' = :params')
-            ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
-            ->where($db->quoteName('folder') . ' = ' . $db->quote('system'))
-            ->where($db->quoteName('element') . ' = ' . $db->quote('wtindexnow'))
-            ->bind(':params', $paramsJson);
-
         try {
-            // Lock the tables to prevent multiple plugin executions causing a race condition
-            $db->lockTable('#__extensions');
+            $lustrun     = $this->params->get('lastrun', null);
+            $currentDate = \date('Y-m-d');
+            if ($lustrun !== $currentDate) {
+                $this->params->set('urls_today_sent_count', 0);
+                $this->params->set('lastrun', $currentDate);
+            }
+            $count = $this->params->get('urls_today_sent_count', 0);
+            $count = $count + $urls_count;
+            $this->params->set('urls_today_sent_count', $count);
+            $paramsJson = $this->params->toString();
+            $db         = $this->getDatabase();
+            $query      = $db->createQuery()
+                ->update($db->quoteName('#__extensions'))
+                ->set($db->quoteName('params') . ' = :params')
+                ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
+                ->where($db->quoteName('folder') . ' = ' . $db->quote('system'))
+                ->where($db->quoteName('element') . ' = ' . $db->quote('wtindexnow'))
+                ->bind(':params', $paramsJson);
+            try {
+                // Lock the tables to prevent multiple plugin executions causing a race condition
+                $db->lockTable('#__extensions');
+            } catch (Exception $e) {
+                // If we can't lock the tables it's too risky to continue execution
+                $this->saveToLog('IndexNow: '.__FUNCTION__ .' '. $e->getMessage().' File: '.$e->getFile().' Line: '.$e->getLine().'.  Cannot lock the database table', Log::ERROR);
+                return false;
+            }
+            try {
+                // Update the plugin parameters
+                $result = $db->setQuery($query)->execute();
+
+                $this->clearCacheGroups(['com_plugins']);
+            } catch (Exception $e) {
+                // If we failed to execute
+                $db->unlockTables();
+                $this->saveToLog('IndexNow: '.__FUNCTION__ .' '. $e->getMessage().' File: '.$e->getFile().' Line: '.$e->getLine().'.  Cannot LOCK the database table', Log::ERROR);
+                $result = false;
+            }
+            try {
+                // Unlock the tables after writing
+                $db->unlockTables();
+            } catch (Exception) {
+                // If we can't lock the tables assume we have somehow failed
+                $this->saveToLog('IndexNow: '.__FUNCTION__ . ' '.$e->getMessage().' File: '.$e->getFile().' Line: '.$e->getLine().'.  Cannot UNLOCK the database table', Log::ERROR);
+                $result = false;
+            }
+
+            return $result;
         } catch (Exception $e) {
-            // If we can't lock the tables it's too risky to continue execution
+            $this->saveToLog('IndexNow: cannot update the dayly sent urls counter in the database table. Method: '.__FUNCTION__ . ' '.$e->getMessage().' File: '.$e->getFile().' Line: '.$e->getLine().'.', Log::ERROR);
             return false;
         }
-
-        try {
-            // Update the plugin parameters
-            $result = $db->setQuery($query)->execute();
-
-            $this->clearCacheGroups(['com_plugins']);
-        } catch (Exception) {
-            // If we failed to execute
-            $db->unlockTables();
-            $result = false;
-        }
-
-        try {
-            // Unlock the tables after writing
-            $db->unlockTables();
-        } catch (Exception) {
-            // If we can't lock the tables assume we have somehow failed
-            $result = false;
-        }
-
-        return $result;
     }
 
     /**

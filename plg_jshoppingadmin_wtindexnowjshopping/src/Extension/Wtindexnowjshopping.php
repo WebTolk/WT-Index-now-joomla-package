@@ -66,6 +66,8 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
             'onAfterPublishProduct'           => 'onAfterPublishProduct',
             'onBeforeDisplayListProductsView' => 'onBeforeDisplayListProductsView',
             'onBeforeDisplayListCategoryView' => 'onBeforeDisplayListCategoryView',
+            'onBeforeDisplayEditProductView'  => 'onBeforeDisplayEditProductView',
+            'onBeforeEditCategories'          => 'onBeforeEditCategories',
             'onAjaxWtindexnowjshopping'       => 'onAjaxWtindexnowjshopping',
         ];
     }
@@ -112,31 +114,7 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
     function onBeforeDisplayListProductsView($event) {
 
         if(!$this->params->get('show_button', true)) return;
-        $app = $this->getApplication();
-        if (!$app->isClient('administrator')) return;
-        if ($app->getInput()->get('option') !== 'com_jshopping') return;
-
-        $toolbar = $app->getDocument()->getToolbar('toolbar');
-
-        $lang = $app->getLanguage('site');
-        $tag  = $lang->getTag();
-        $app->getLanguage()
-            ->load('plg_jshoppingadmin_wtindexnowjshopping', JPATH_ADMINISTRATOR, $tag, true);
-
-        $button = (new BasicButton('send-to-indexnow'))
-            ->text(Text::_('PLG_WTINDEXNOWJSHOPPING_BUTTON_LABEL'))
-            ->icon('fa-solid fa-arrow-up-right-dots')
-            ->onclick('window.wtindexnowjshopping()')
-            ->listCheck(true);
-
-        $toolbar->appendButton($button);
-
-        /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerAndUseScript(
-            'wtindexnow.jshoppingadmin.ajax.send',
-            'plg_jshoppingadmin_wtindexnowjshopping/ajaxsend.js'
-        );
+        $this->addToolbarButton(listCheck: true);
     }
 
     /**
@@ -149,33 +127,33 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
      */
     function onBeforeDisplayListCategoryView($event){
         if(!$this->params->get('show_button', true)) return;
-        $app = $this->getApplication();
-        if (!$app->isClient('administrator')) return;
-        if ($app->getInput()->get('option') !== 'com_jshopping') return;
-        $toolbar = $app->getDocument()->getToolbar('toolbar');
+        $this->addToolbarButton(listCheck: true);
+    }
 
-        $lang = $app->getLanguage('site');
-        $tag  = $lang->getTag();
-        $app->getLanguage()
-            ->load('plg_jshoppingadmin_wtindexnowjshopping', JPATH_ADMINISTRATOR, $tag, true);
+    /**
+     * Add a IndexNow button to Joomshopping Toolbar to product edit page
+     *
+     * @param Event $event
+     *
+     *
+     * @since 1.0.0
+     */
+    function onBeforeDisplayEditProductView($event){
+        if(!$this->params->get('show_button', true)) return;
+        $this->addToolbarButton(listCheck: false);
+    }
 
-        $button = (new BasicButton('send-to-indexnow'))
-            ->text(Text::_('PLG_WTINDEXNOWJSHOPPING_BUTTON_LABEL'))
-            ->icon('fa-solid fa-arrow-up-right-dots')
-            ->onclick('window.wtindexnowjshopping()');
-        if ($app->getInput()->get('controller') === 'categories') {
-            $button->listCheck(true);
-        }
-
-        $toolbar->appendButton($button);
-
-        /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-        $wa = $app->getDocument()
-            ->getWebAssetManager();
-        $wa->registerAndUseScript(
-            'wtindexnow.jshoppingadmin.ajax.send',
-            'plg_jshoppingadmin_wtindexnowjshopping/ajaxsend.js'
-        );
+    /**
+     * Add a IndexNow button to Joomshopping Toolbar to category edit page
+     *
+     * @param Event $event
+     *
+     *
+     * @since 1.0.0
+     */
+    function onBeforeEditCategories($event){
+        if(!$this->params->get('show_button', true)) return;
+        $this->addToolbarButton(listCheck: false);
     }
 
     /**
@@ -342,5 +320,40 @@ final class Wtindexnowjshopping extends CMSPlugin implements SubscriberInterface
         }
 
         return $sent_urls;
+    }
+
+    /**
+     * Add IndexNow button to the JoomShopping toolbar
+     *
+     * @param bool $listCheck true for list check param for button
+     *
+     *
+     * @since 1.0.0
+     */
+    private function addToolbarButton($listCheck = false): void
+    {
+        $app = $this->getApplication();
+        $toolbar = $app->getDocument()->getToolbar('toolbar');
+
+        $lang = $app->getLanguage('site');
+        $tag  = $lang->getTag();
+        $app->getLanguage()
+            ->load('plg_jshoppingadmin_wtindexnowjshopping', JPATH_ADMINISTRATOR, $tag, true);
+
+        $button = (new BasicButton('send-to-indexnow'))
+            ->text(Text::_('PLG_WTINDEXNOWJSHOPPING_BUTTON_LABEL'))
+            ->icon('fa-solid fa-arrow-up-right-dots')
+            ->onclick('window.wtindexnowjshopping()');
+        if ($listCheck) {
+            $button->listCheck(true);
+        }
+        $toolbar->appendButton($button);
+
+        /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+        $wa = $app->getDocument()->getWebAssetManager();
+        $wa->registerAndUseScript(
+            'wtindexnow.jshoppingadmin.ajax.send',
+            'plg_jshoppingadmin_wtindexnowjshopping/ajaxsend.js'
+        );
     }
 }
