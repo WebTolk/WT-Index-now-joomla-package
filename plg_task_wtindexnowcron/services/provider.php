@@ -1,6 +1,7 @@
 <?php
 /**
  * @package       WT IndexNow package
+ * @subpackage    WT IndexNow CRON
  * @version       1.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2025 Sergey Tolkachyov

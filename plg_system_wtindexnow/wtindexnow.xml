@@ -4,7 +4,7 @@
 	<author>Sergey Tolkachyov</author>
 	<authorEmail>info@web-tolk.ru</authorEmail>
 	<authorUrl>https://web-tolk.ru</authorUrl>
-	<creationDate>11.12.2025</creationDate>
+	<creationDate>23.12.2025</creationDate>
 	<copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
 	<license>GNU General Public License v3.0</license>
 	<version>1.0.0</version>
@@ -76,7 +76,7 @@
 					   description="PLG_WTINDEXNOW_INDEXNOW_URL_DESC"
 					   default="https://api.indexnow.org/indexnow">
 					<option value="https://api.indexnow.org/indexnow">IndexNow.org</option>
-					<option value="https://indexnow.amazonbot.amazon/indexnow">mazon</option>
+					<option value="https://indexnow.amazonbot.amazon/indexnow">Amazon</option>
 					<option value="https://www.bing.com/indexnow">Microsoft Bing</option>
 					<option value="https://searchadvisor.naver.com/indexnow">Naver</option>
 					<option value="https://search.seznam.cz/indexnow">Seznam.cz</option>

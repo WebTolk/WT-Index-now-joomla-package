@@ -1,20 +1,22 @@
 <?php
 /**
  * @package       WT IndexNow package
- * @version     1.0.0
- * @Author      Sergey Tolkachyov, https://web-tolk.ru
- * @copyright   Copyright (C) 2024 Sergey Tolkachyov
- * @license     GNU/GPL 3
- * @since       1.0.0
+ * @subpackage    WT IndexNow - Articles (com_content)
+ * @version       1.0.0
+ * @Author        Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2025 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
+ * @since         1.0.0
  */
 
 namespace Joomla\Plugin\Content\Wtindexnowcontent\Fields;
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\NoteField;
 use Joomla\CMS\Language\Text;
+use function defined;
 
-\defined('_JEXEC') or die;
-
+defined('_JEXEC') or die;
 
 class PlugininfoField extends NoteField
 {
