@@ -2,7 +2,7 @@
 <extension type="package" method="upgrade">
 	<name>PKG_WTINDEXNOW</name>
 	<author>Sergey Tolkachyov</author>
-	<creationDate>20.12.2025</creationDate>
+	<creationDate>23.12.2025</creationDate>
 	<packagename>wtindexnow</packagename>
 	<version>1.0.0</version>
 	<url>https://web-tolk.ru</url>
