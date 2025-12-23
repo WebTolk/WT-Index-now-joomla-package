@@ -27,7 +27,7 @@
 	   	<folder type="plugin" id="wtindexnowcron" group="task">plg_task_wtindexnowcron</folder>
 	</files>
 	<updateservers>
-		<server type="extension" name="WebTolk - WT IndexNow package">https://web-tolk.ru/component/swjprojects/jupdate?element=pkg_wtindexnow</server>
+		<server type="extension" name="WebTolk - WT IndexNow package">https://web-tolk.ru/component/swjprojects/jupdate?element=pkgwtindexnow</server>
 	</updateservers>
-	<changelogurl>https://web-tolk.ru/jchangelog?element=pkg_wtindexnow</changelogurl>
+	<changelogurl>https://web-tolk.ru/jchangelog?element=pkgwtindexnow</changelogurl>
 </extension>
