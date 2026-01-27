@@ -4,10 +4,10 @@
     <author>Sergey Sergevnin, Sergey Tolkachyov</author>
     <authorEmail>info@web-tolk.ru</authorEmail>
     <authorUrl>https://web-tolk.ru</authorUrl>
-    <creationDate>23.12.2025</creationDate>
-    <copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
+    <creationDate>27.01.2026</creationDate>
+    <copyright>Copyright (c) 2025 - 2026 Sergey Tolkachyov. All rights reserved.</copyright>
     <license>GNU General Public License v3.0</license>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>PLG_WTINDEXNOWJSHOPPING_DESC</description>
     <namespace path="src">Joomla\Plugin\Jshoppingadmin\Wtindexnowjshopping</namespace>
 	<media destination="plg_jshoppingadmin_wtindexnowjshopping" folder="media">

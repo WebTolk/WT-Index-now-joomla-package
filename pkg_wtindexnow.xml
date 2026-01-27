@@ -2,9 +2,9 @@
 <extension type="package" method="upgrade">
 	<name>PKG_WTINDEXNOW</name>
 	<author>Sergey Tolkachyov</author>
-	<creationDate>23.12.2025</creationDate>
+	<creationDate>27.01.2026</creationDate>
 	<packagename>wtindexnow</packagename>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<url>https://web-tolk.ru</url>
 	<packager>Sergey Tolkachyov</packager>
 	<packagerurl>https://web-tolk.ru/dev/biblioteki/wt-amo-crm-library</packagerurl>
