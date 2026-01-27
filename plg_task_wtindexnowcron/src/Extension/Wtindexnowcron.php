@@ -2,7 +2,7 @@
 /**
  * @package       WT IndexNow package
  * @subpackage    WT IndexNow CRON
- * @version       1.0.0
+ * @version       1.0.1
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2025 Sergey Tolkachyov
  * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
@@ -103,28 +103,33 @@ final class Wtindexnowcron extends CMSPlugin implements SubscriberInterface
         $urls = $db->setQuery($query)->loadColumn();
 
         if (empty($urls)) {
-            return STATUS::OK;
+            return Status::OK;
         }
 
-        $db->transactionStart();
-        $result = false;
-        try
-        {
-
+        try {
             $result = $this->getApplication()
-                           ->bootPlugin('wtindexnow', 'system')
-                           ->sendUrlsToIndexNow($urls);
-            if($result) {
-                $query->clear();
-                $query->delete($db->quoteName('#__plg_system_wtindexnow_urls_queue'))
-                    ->whereIn($db->quoteName('url'), $urls, ParameterType::STRING);
-                $db->setQuery($query)->execute();
-            }
+                ->bootPlugin('wtindexnow', 'system')
+                ->sendUrlsToIndexNow($urls);
+        } catch (\Throwable $e) {
+            $this->logTask('IndexNow send error: ' . $e->getMessage(), 'error');
+            return Status::KNOCKOUT;
+        }
 
-            $db->transactionCommit();
-        } catch (Exception $e)
-        {
-            $db->transactionRollback();
+        if ($result) {
+            $db->transactionStart();
+            try {
+                $query->clear()
+                    ->delete($db->quoteName('#__plg_system_wtindexnow_urls_queue'))
+                    ->whereIn($db->quoteName('url'), $urls, ParameterType::STRING);
+
+                $db->setQuery($query)->execute();
+                $db->transactionCommit();
+            } catch (\Throwable $e) {
+                $db->transactionRollback();
+                $this->logTask('IndexNow queue error: ' . $e->getMessage(), 'error');
+
+                $result = false;
+            }
         }
 
         return $result ? Status::OK : Status::KNOCKOUT;

@@ -16,7 +16,7 @@
 		@task  Package dev      	Package developer version
 	-->
 	<property name="name" value="WT IndexNow package"/>
-	<property name="version" value="1.0.0"/>
+	<property name="version" value="1.0.1"/>
 	<property name="author" value="Sergey Tolkachyov"/>
 	<property name="authorEmail" value="info@web-tolk.ru"/>
 	<property name="copyright" value="Copyright (c) %s Sergey Tolkachyov. All rights reserved."/>
